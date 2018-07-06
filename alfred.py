@@ -26,8 +26,8 @@ class Alfred:
         dp = self.updater.dispatcher
 
         # on different commands - answer in Telegram
-        dp.add_handler(CommandHandler("start", AlfredCommands.start))
         dp.add_handler(CommandHandler("help", help))
+        dp.add_handler(CommandHandler("start", AlfredCommands.start))
         dp.add_handler(CommandHandler("whatsnew", AlfredCommands.whats_new))
         dp.add_handler(CommandHandler("mute", AlfredCommands.mute))
 
