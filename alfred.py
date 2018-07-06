@@ -28,6 +28,7 @@ class Alfred:
         # on different commands - answer in Telegram
         dp.add_handler(CommandHandler("start", AlfredCommands.start))
         dp.add_handler(CommandHandler("help", help))
+        dp.add_handler(CommandHandler("whatsnew", AlfredCommands.whats_new))
 
         # Log errors.
         dp.add_error_handler(self.error)
