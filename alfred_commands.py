@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 from db import AlfredMemory
 from user import User
-
+import json
 
 class AlfredCommands:
     alfred_memory = AlfredMemory()
-    datenschutz = "Datenschutzerklärung -\n\nBitte lesen, sie ist nicht lang! Sowohl wir als Entwickler, als auch der NDR haben kein Interesse an den gesendeten Nachrichten.Wir können nichts mitlesen, mithören, oder einspeichern und selbst die Präferenzen für Alfred werden nicht weitergegeben. Datenschutz ist für uns sehr wichtig und in einer Zeit, in der jeder persönliche Daten abgreifen und verkaufen will, ist es uns wichtig klarzustellen: WIR NICHT ! "
+
+    @staticmethod
+    def get_text(filename):
+        with open(filename, "r") as f:
+            data = json.load(f)
+            if "text" not in data:
+                raise FileNotFoundError("File not found.")
+            return data["text"]
+
+
     @staticmethod
     def start(bot, update):
-        update.message.reply_text(AlfredCommands.datenschutz)
+        datenschutz = AlfredCommands.get_text("datenschutz.json")
+        update.message.reply_text(datenschutz)
         user = update.message.from_user
         # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
@@ -19,6 +29,11 @@ class AlfredCommands:
         user_obj = User(user_dict=user_dict)
 
         AlfredCommands.alfred_memory.upsert_user(user=user_obj)
+
+    @staticmethod
+    def help(bot, update):
+        help = AlfredCommands.get_text("help.json")
+        update.message.reply_text(help)
 
     @staticmethod
     def neues(bot, update):
