@@ -29,6 +29,7 @@ class Alfred:
         dp.add_handler(CommandHandler("start", AlfredCommands.start))
         dp.add_handler(CommandHandler("help", help))
         dp.add_handler(CommandHandler("whatsnew", AlfredCommands.whats_new))
+        dp.add_handler(CommandHandler("mute", AlfredCommands.mute))
 
         # Log errors.
         dp.add_error_handler(self.error)
