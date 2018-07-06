@@ -28,8 +28,12 @@ class Alfred:
         # on different commands - answer in Telegram
         dp.add_handler(CommandHandler("help", help))
         dp.add_handler(CommandHandler("start", AlfredCommands.start))
-        dp.add_handler(CommandHandler("whatsnew", AlfredCommands.whats_new))
-        dp.add_handler(CommandHandler("mute", AlfredCommands.mute))
+        dp.add_handler(CommandHandler("neues", AlfredCommands.neues))
+        dp.add_handler(CommandHandler("deaktivieren", AlfredCommands.deaktivieren))
+        dp.add_handler(CommandHandler("aktivieren", AlfredCommands.aktivieren))
+        dp.add_handler(CommandHandler("weitere_nachricht", AlfredCommands.weitere_nachricht()))
+        dp.add_handler(CommandHandler("naechste_rubrik", AlfredCommands.naechste_rubrik()))
+
 
         # Log errors.
         dp.add_error_handler(self.error)

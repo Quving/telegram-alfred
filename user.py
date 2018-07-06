@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import json
 
 
 class User:
@@ -27,6 +26,10 @@ class User:
 
 
     def to_dict(self):
+        """
+        Returns a dictionary object that represent the User object.
+        :return:
+        """
         data = {"id": self.id,
                 "username": self.username,
                 "first_name": self.first_name,

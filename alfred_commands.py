@@ -21,14 +21,44 @@ class AlfredCommands:
         AlfredCommands.alfred_memory.upsert_user(user=user_obj)
 
     @staticmethod
-    def whats_new(bot, update):
+    def neues(bot, update):
         update.message.reply_text(
             'Na du, normalerweise wuerdest du jetzt Nachrichten erhalten. Aber an dieser Funktionalitaet wird noch gearbeitet. :D')
 
     @staticmethod
-    def mute(bot, update):
+    def deaktivieren(bot, update):
         update.message.reply_text(
-            'Ich stelle fuer dich die Push-Notifications ein.')
+            'Push Nachrichten sind deaktiviert.')
+
+    @staticmethod
+    def aktivieren(bot, update):
+        update.message.reply_text(
+            'Push Nachrichten sind aktiviert.')
+
+    @staticmethod
+    def mehr(bot, update):
+        update.message.reply_text(
+            'In Bearbeitung. Weitere Informationen zum Thema X wuerden jetzt kommen.')
+
+
+    @staticmethod
+    def hintergrund(bot, update):
+        update.message.reply_text(
+            'In Bearbeitung. Mehr Hintergrund Informationen wuerden jetzt angezeigt werden.')
+
+
+    @staticmethod
+    def weitere_nachricht(bot, update):
+        update.message.reply_text(
+            'In Bearbeitung. Weitere Nachrichten wuerden hier angezeigt werden.')
+
+
+    @staticmethod
+    def naechste_rubrik(bot, update):
+        update.message.reply_text(
+            'In Bearbeitung. Die naechste Rubrik kommt. ... wenn die Funktionalitaet da ist. :)')
+
+
 
 
 """
