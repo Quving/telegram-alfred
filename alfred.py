@@ -26,7 +26,7 @@ class Alfred:
         dp = self.updater.dispatcher
 
         # on different commands - answer in Telegram
-        dp.add_handler(CommandHandler("help", help))
+        dp.add_handler(CommandHandler("help", self.help))
         dp.add_handler(CommandHandler("start", AlfredCommands.start))
         dp.add_handler(CommandHandler("neues", AlfredCommands.neues))
         dp.add_handler(CommandHandler("deaktivieren", AlfredCommands.deaktivieren))
@@ -34,9 +34,21 @@ class Alfred:
         dp.add_handler(CommandHandler("weitere_nachricht", AlfredCommands.weitere_nachricht))
         dp.add_handler(CommandHandler("naechste_rubrik", AlfredCommands.naechste_rubrik))
 
-
         # Log errors.
         dp.add_error_handler(self.error)
+
+    def help(self, bot, update):
+        help_text = "\n \
+            /deaktivieren - Push-Nachrichten deaktivieren\n \
+            /aktivieren - Push-Nachrichten aktivieren\n \
+            /neues - Meine aktuellen Nachrichten anzeigen\n \
+            /mehr - Weitere Informationen anzeigen\n \
+            /hintergrund - Was ist passiert?\n \
+            /naechste_rubrik - Zu der nächsten Rubrik\n \
+            /weitere_nachricht - Nächste Nachricht aus der Rubrik\n \
+        "
+
+        update.message.reply_text(help_text)
 
     def error(self, bot, update, error):
         self.logger.warning('Update "%s" caused error "%s"', update, error)
