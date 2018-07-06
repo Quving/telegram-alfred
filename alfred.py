@@ -31,8 +31,8 @@ class Alfred:
         dp.add_handler(CommandHandler("neues", AlfredCommands.neues))
         dp.add_handler(CommandHandler("deaktivieren", AlfredCommands.deaktivieren))
         dp.add_handler(CommandHandler("aktivieren", AlfredCommands.aktivieren))
-        dp.add_handler(CommandHandler("weitere_nachricht", AlfredCommands.weitere_nachricht()))
-        dp.add_handler(CommandHandler("naechste_rubrik", AlfredCommands.naechste_rubrik()))
+        dp.add_handler(CommandHandler("weitere_nachricht", AlfredCommands.weitere_nachricht))
+        dp.add_handler(CommandHandler("naechste_rubrik", AlfredCommands.naechste_rubrik))
 
 
         # Log errors.
