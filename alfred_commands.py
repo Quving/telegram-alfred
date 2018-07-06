@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from db import AlfredMemory
+from user import User
 
 
 class AlfredCommands:
@@ -11,9 +12,13 @@ class AlfredCommands:
         user = update.message.from_user
         # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
-        AlfredCommands.alfred_memory.upsert_user(user_id=user["id"],
-                                                 data={"first_name": user["first_name"],
-                                                       "username": user["username"]})
+        user_dict = {"id": str(user["id"]),
+                     "first_name": user["first_name"],
+                     "username": user["username"]}
+
+        user_obj = User(user_dict=user_dict)
+
+        AlfredCommands.alfred_memory.upsert_user(user=user_obj)
 
     @staticmethod
     def whats_new(bot, update):
