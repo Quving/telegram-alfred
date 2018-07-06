@@ -5,7 +5,7 @@ pipeline:
     repo: pingu/alfred
     tags: latest
     secrets: [ docker_username, docker_password ]
-    build_args: ["--no-cache"]
+    # build_args: ["--no-cache"]
     when:
       status: [ success ]
       branch: [ master ]
