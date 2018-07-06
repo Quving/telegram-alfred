@@ -2,7 +2,7 @@
 from db import AlfredMemory
 from user import User
 import json
-
+from alfred_exceptions import AlfredFileWrongFormatException
 class AlfredCommands:
     alfred_memory = AlfredMemory()
 
@@ -11,7 +11,7 @@ class AlfredCommands:
         with open(filename, "r") as f:
             data = json.load(f)
             if "text" not in data:
-                raise FileNotFoundError("File not found.")
+                raise AlfredFileWrongFormatException("File does not contain 'text' key.")
             return data["text"]
 
 
