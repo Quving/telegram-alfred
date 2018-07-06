@@ -19,7 +19,7 @@ class Alfred:
 
         token = os.getenv("ALFRED_BOT_TOKEN")
         if token is None:
-            raise BotTokenNotSetException("Set the bottoken.")
+            raise BotTokenNotSetException("Set the bot token.")
 
         self.updater = Updater(token)
 
