@@ -4,7 +4,7 @@ version: '0.0.1'
 description: alfred
 services:
   server:
-    image: pingu/alred:latest
+    image: pingu/alfred:latest
     links:
       - system/lb
     instances: 1
