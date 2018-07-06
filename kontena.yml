@@ -7,11 +7,26 @@ services:
     image: pingu/alfred:latest
     links:
       - system/lb
+      - db
     instances: 1
     secrets:
       - secret: ALFRED_BOT_TOKEN
         name: ALFRED_BOT_TOKEN
         type: env
+  db:
+    image: mongo:latest
+    instances: 1
+    affinity:
+      - node==orange
+    stateful: yes
+    volumes:
+      - /srv/alfred-db:/data/db
+    links:
+      - system/lb
+    ports:
+      - 27000:27017
+    environment:
+      - TZ=Europe/Berlin
 
 
 
