@@ -3,7 +3,7 @@ stack: vngu/alfred
 version: '0.0.1'
 description: alfred
 services:
-  server:
+  bot:
     image: pingu/alfred:latest
     links:
       - system/lb
