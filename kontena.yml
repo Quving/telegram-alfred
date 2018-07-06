@@ -1,0 +1,17 @@
+---
+stack: vngu/alfred
+version: '0.0.1'
+description: alfred
+services:
+  server:
+    image: pingu/alred:latest
+    links:
+      - system/lb
+    instances: 1
+    secrets:
+      - secret: ALFRED_BOT_TOKEN
+        name: ALFRED_BOT_TOKEN
+        type: env
+
+
+
