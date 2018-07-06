@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+import json
+
+from alfred_exceptions import AlfredFileWrongFormatException
 from db import AlfredMemory
 from user import User
-import json
-from alfred_exceptions import AlfredFileWrongFormatException
+
+
 class AlfredCommands:
     alfred_memory = AlfredMemory()
 
@@ -13,7 +16,6 @@ class AlfredCommands:
             if "text" not in data:
                 raise AlfredFileWrongFormatException("File does not contain 'text' key.")
             return data["text"]
-
 
     @staticmethod
     def start(bot, update):
@@ -55,25 +57,20 @@ class AlfredCommands:
         update.message.reply_text(
             'In Bearbeitung. Weitere Informationen zum Thema X wuerden jetzt kommen.')
 
-
     @staticmethod
     def hintergrund(bot, update):
         update.message.reply_text(
             'In Bearbeitung. Mehr Hintergrund Informationen wuerden jetzt angezeigt werden.')
-
 
     @staticmethod
     def weitere_nachricht(bot, update):
         update.message.reply_text(
             'In Bearbeitung. Weitere Nachrichten wuerden hier angezeigt werden.')
 
-
     @staticmethod
     def naechste_rubrik(bot, update):
         update.message.reply_text(
             'In Bearbeitung. Die naechste Rubrik kommt. ... wenn die Funktionalitaet da ist. :)')
-
-
 
 
 """

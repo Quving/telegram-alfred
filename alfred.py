@@ -5,8 +5,8 @@ import os
 
 from telegram.ext import Updater, CommandHandler
 
-from alfred_exceptions import BotTokenNotSetException
 from alfred_commands import AlfredCommands
+from alfred_exceptions import BotTokenNotSetException
 
 
 class Alfred:

@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 import os
 from alfred_exceptions import UserNotFoundException
 from pymongo import MongoClient
 from user import User
+
 
 class AlfredMemory:
     def __init__(self):
@@ -55,19 +57,18 @@ class AlfredMemory:
         """
 
         if not isinstance(user, User):
-           raise ValueError("Expected user object. Given " + str(type(dict)))
+            raise ValueError("Expected user object. Given " + str(type(dict)))
 
         id = user.id
         user_dict = user.to_dict()
 
         user_db = self.mongo.alfred.user
 
-        if self.user_exist_by_id(id): # Update User if exist.
+        if self.user_exist_by_id(id):  # Update User if exist.
             for key, value in user.items():
                 user[key] = value
 
             key = {"id": id}
             user_db.update(key, user_dict, upsert=True)
-        else: # Else insert.
+        else:  # Else insert.
             user_db.insert_one(user_dict)
-
