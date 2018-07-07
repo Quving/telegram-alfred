@@ -17,9 +17,8 @@ class AlfredNewsMemory:
         :return:
         """
         client = MongoClient("mongodb://" + os.getenv("ALFRED_MONGO_DB_HOST", "db"))
-        print(preferences)
 
-        news_article = client.alfred_db.test.find_one(preferences)
+        news_article = client.alfred_db.test.find(preferences)
 
         if news_article is None:
             return "Es gibt keine neuen Nachrichten mit ihren angegebenen Präferenzen."
@@ -27,3 +26,5 @@ class AlfredNewsMemory:
         if "teaser" in news_article and "link" in news_article:
             text = news_article["teaser"] + "\n\n" + news_article["link"]
             return text
+
+
