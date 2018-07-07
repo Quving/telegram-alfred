@@ -7,8 +7,10 @@ from telegram.ext import Updater, CommandHandler
 
 from alfred_user_commands import AlfredUserCommands
 from alfred_exceptions import BotTokenNotSetException
-from alfred_conversation_handler import AlfredConversationHandler
+from alfred_conversation_handler import AlfredConversationHandler, MessageHandler, Filters
 from alfred_other_command import AlfredOtherCommands
+
+
 class Alfred:
     def __init__(self):
         # Enable logging
@@ -37,6 +39,7 @@ class Alfred:
         # User Commands - Filter
         dp.add_handler(CommandHandler("demo", AlfredOtherCommands.demo))
         dp.add_handler(AlfredConversationHandler.get_conversation_hander())
+        dp.add_handler(MessageHandler([Filters.text], AlfredOtherCommands.hookpoint))
 
         # Log errors.
         dp.add_error_handler(self.error)

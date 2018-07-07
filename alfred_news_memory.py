@@ -23,6 +23,7 @@ class AlfredNewsMemory:
 
         if news_article is None:
             return "Es gibt keine neuen Nachrichten mit ihren angegebenen Präferenzen."
+
         if "teaser" in news_article and "link" in news_article:
             text = news_article["teaser"] + "\n\n" + news_article["link"]
             return text
