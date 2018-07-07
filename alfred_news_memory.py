@@ -20,14 +20,20 @@ class AlfredNewsMemory:
         """
         client = MongoClient("mongodb://" + os.getenv("ALFRED_MONGO_DB_HOST", "db"))
 
+        tmp = []
         news_articles = client.alfred_db.test.find(preferences)
-        news_article = news_articles[random.randint(0, len(news_articles-1))]
 
-        if news_article is None:
+        for x in news_articles:
+            tmp.append(x)
+
+        index = 0
+        if len(tmp) - 1 < 0:
+            index = 0
+
+        news_article = tmp[random.randint(0, index)]
+        if len(tmp) == 0:
             return "Es gibt keine neuen Nachrichten mit ihren angegebenen Präferenzen."
 
         if "teaser" in news_article and "link" in news_article:
             text = news_article["teaser"] + "\n\n" + news_article["link"]
             return text
-
-
