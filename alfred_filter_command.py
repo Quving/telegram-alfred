@@ -18,21 +18,7 @@ class AlfredFilterCommands:
         print(user_obj.to_dict())
         update.message.reply_text("Erfolgreich")
 
-    @staticmethod
-    def test(bot, update):
-        CHOOSING, TYPING_REPLY, TYPING_CHOICE = range(3)
 
-        reply_keyboard = [['Age', 'Favourite colour'],
-                          ['Number of siblings', 'Something else...'],
-                          ['Done']]
-        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
-
-        update.message.reply_text(
-            "Hi! My name is Doctor Botter. I will hold a more complex conversation with you. "
-            "Why don't you tell me something about yourself?",
-            reply_markup=markup)
-
-        return CHOOSING
 
 
 

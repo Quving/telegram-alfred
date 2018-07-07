@@ -22,7 +22,7 @@ class AlfredConversationHandler:
     @staticmethod
     def get_conversation_hander():
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('personalisiere', AlfredConversationHandler.start)],
+            entry_points=[CommandHandler('start', AlfredConversationHandler.start)],
 
             states={
                 AlfredConversationHandler.CHOOSING: [RegexHandler('^(' + AlfredConversationHandler.option1 +

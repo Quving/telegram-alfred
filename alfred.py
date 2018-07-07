@@ -28,7 +28,7 @@ class Alfred:
 
         # User Commands
         dp.add_handler(CommandHandler("help", AlfredUserCommands.help))
-        dp.add_handler(CommandHandler("start", AlfredUserCommands.start))
+        # dp.add_handler(CommandHandler("start", AlfredUserCommands.start))
         dp.add_handler(CommandHandler("neues", AlfredUserCommands.neues))
         dp.add_handler(CommandHandler("deaktivieren", AlfredUserCommands.deaktivieren))
         dp.add_handler(CommandHandler("aktivieren", AlfredUserCommands.aktivieren))
