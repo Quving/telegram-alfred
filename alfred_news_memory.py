@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 import os
+import random
 
 from pymongo import MongoClient
 
@@ -18,7 +20,8 @@ class AlfredNewsMemory:
         """
         client = MongoClient("mongodb://" + os.getenv("ALFRED_MONGO_DB_HOST", "db"))
 
-        news_article = client.alfred_db.test.find(preferences)
+        news_articles = client.alfred_db.test.find(preferences)
+        news_article = news_articles[random.randint(0, len(news_articles-1))]
 
         if news_article is None:
             return "Es gibt keine neuen Nachrichten mit ihren angegebenen Präferenzen."
