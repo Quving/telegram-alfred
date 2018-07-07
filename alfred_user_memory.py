@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from user import User
 
 
-class AlfredMemory:
+class AlfredUserMemory:
     def __init__(self):
         self.mongo = self.get_mongo_client()
 
@@ -31,7 +31,6 @@ class AlfredMemory:
 
         user_db = self.mongo.alfred.user
         user_dict = user_db.find_one({"id": id})
-
         if user_dict is None:
             raise UserNotFoundException("User " + id + " does not exist.")
 
@@ -46,7 +45,7 @@ class AlfredMemory:
         :return:
         """
         user_db = self.mongo.afred.user
-        return not user_db.find_one({"id": id}) is None
+        return not user_db.find_one({"id": str(id)}) is None
 
     def upsert_user(self, user):
         """
@@ -64,11 +63,5 @@ class AlfredMemory:
 
         user_db = self.mongo.alfred.user
 
-        if self.user_exist_by_id(id):  # Update User if exist.
-            for key, value in user.items():
-                user[key] = value
-
-            key = {"id": id}
-            user_db.update(key, user_dict, upsert=True)
-        else:  # Else insert.
-            user_db.insert_one(user_dict)
+        key = {"id": id}
+        user_db.update(key, user_dict, upsert=True)

@@ -2,12 +2,14 @@
 import json
 
 from alfred_exceptions import AlfredFileWrongFormatException
-from db import AlfredMemory
+from alfred_user_memory import AlfredUserMemory
+from alfred_news_memory import AlfredNewsMemory
 from user import User
 
 
-class AlfredCommands:
-    alfred_memory = AlfredMemory()
+class AlfredUserCommands:
+    alfred_user_memory = AlfredUserMemory()
+    alfred_news_memory = AlfredNewsMemory()
 
     @staticmethod
     def get_text(filename):
@@ -19,8 +21,9 @@ class AlfredCommands:
 
     @staticmethod
     def start(bot, update):
-        datenschutz = AlfredCommands.get_text("datenschutz.json")
+        datenschutz = AlfredUserCommands.get_text("datenschutz.json")
         update.message.reply_text(datenschutz)
+
         user = update.message.from_user
         # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
@@ -29,18 +32,22 @@ class AlfredCommands:
                      "username": user["username"]}
 
         user_obj = User(user_dict=user_dict)
-
-        AlfredCommands.alfred_memory.upsert_user(user=user_obj)
+        AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
 
     @staticmethod
     def help(bot, update):
-        help = AlfredCommands.get_text("help.json")
+        help = AlfredUserCommands.get_text("help.json")
         update.message.reply_text(help)
 
     @staticmethod
     def neues(bot, update):
-        update.message.reply_text(
-            'Na du, normalerweise wuerdest du jetzt Nachrichten erhalten. Aber an dieser Funktionalitaet wird noch gearbeitet. :D')
+        user_tg = update.message.from_user
+        user_id = str(user_tg["id"])
+
+        user = AlfredUserCommands.alfred_user_memory.get_user_by_id(user_id)
+        text = AlfredUserCommands.alfred_news_memory.get_neues(user.preferences)
+
+        update.message.reply_text(text)
 
     @staticmethod
     def deaktivieren(bot, update):
