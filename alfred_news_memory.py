@@ -3,9 +3,7 @@ import os
 
 from pymongo import MongoClient
 
-from alfred_exceptions import UserNotFoundException
 from alfred_user_memory import AlfredUserMemory
-from user import User
 
 
 class AlfredNewsMemory:
@@ -19,10 +17,12 @@ class AlfredNewsMemory:
         :return:
         """
         client = MongoClient("mongodb://" + os.getenv("ALFRED_MONGO_DB_HOST", "db"))
+        print(preferences)
+
         news_article = client.alfred_db.test.find_one(preferences)
-        client.close()
-        return news_article
 
-        # TODO Some processing with the stored preferences. Type of dict.
-
-        return "In Bearbeitung! Kommt in Kuerze!"
+        if news_article is None:
+            return "Es gibt keine neuen Nachrichten mit ihren angegebenen Präferenzen."
+        if "teaser" in news_article and "link" in news_article:
+            text = news_article["teaser"] + "\n\n" + news_article["link"]
+            return text

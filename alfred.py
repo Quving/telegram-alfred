@@ -6,10 +6,9 @@ import os
 from telegram.ext import Updater, CommandHandler
 
 from alfred_user_commands import AlfredUserCommands
-from alfred_filter_command import AlfredFilterCommands
 from alfred_exceptions import BotTokenNotSetException
 from alfred_conversation_handler import AlfredConversationHandler
-
+from alfred_other_command import AlfredOtherCommands
 class Alfred:
     def __init__(self):
         # Enable logging
@@ -36,7 +35,7 @@ class Alfred:
         dp.add_handler(CommandHandler("naechste_rubrik", AlfredUserCommands.naechste_rubrik))
 
         # User Commands - Filter
-        dp.add_handler(CommandHandler("setze_region", AlfredFilterCommands.setze_region))
+        dp.add_handler(CommandHandler("demo", AlfredOtherCommands.demo))
         dp.add_handler(AlfredConversationHandler.get_conversation_hander())
 
         # Log errors.

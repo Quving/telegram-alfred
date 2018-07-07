@@ -1,11 +1,15 @@
+#!/usr/bin/env python3
 from telegram import ReplyKeyboardMarkup
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
+from telegram.ext import (CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
-from alfred_user_memory import AlfredUserMemory
+
 from alfred_news_memory import AlfredNewsMemory
+from alfred_user_commands import AlfredUserCommands
+from alfred_user_memory import AlfredUserMemory
+from user import User
+
 
 class AlfredConversationHandler:
-
     alfred_user_memory = AlfredUserMemory()
     alfred_news_memory = AlfredNewsMemory()
 
@@ -46,17 +50,29 @@ class AlfredConversationHandler:
                                                          ],
             },
 
-            fallbacks=[RegexHandler('^' + AlfredConversationHandler.option4 + '$', AlfredConversationHandler.done, pass_user_data=True)]
+            fallbacks=[RegexHandler('^' + AlfredConversationHandler.option4 + '$', AlfredConversationHandler.done,
+                                    pass_user_data=True)]
         )
 
         return conv_handler
 
     @staticmethod
     def start(bot, update):
-        update.message.reply_text(
-            "Wie soll der Filter konfiguriert werden?"
-            "Bitte wählen Sie Ihre Vorlieben.",
-            reply_markup=AlfredConversationHandler.markup)
+
+        user = update.message.from_user
+        # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
+
+        user_dict = {"id": str(user["id"]),
+                     "first_name": user["first_name"],
+                     "username": user["username"]}
+
+        user_obj = User(user_dict=user_dict)
+        AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
+        update.message.reply_text("Moin, " +
+                                  user["first_name"] +"!" +
+                                  "\nDarf ich mich vorstellen: Ich bin Alfred, ihr News-Bot’ler!"
+                                  "\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
+                                  reply_markup=AlfredConversationHandler.markup)
 
         return AlfredConversationHandler.CHOOSING
 
@@ -100,7 +116,7 @@ class AlfredConversationHandler:
         user_id = str(user["id"])
         user_obj = AlfredConversationHandler.alfred_user_memory.get_user_by_id(user_id=user_id)
 
-        user_obj.preferences=user_data
+        user_obj.preferences = user_data
         AlfredConversationHandler.alfred_user_memory.upsert_user(user=user_obj)
 
         user_data.clear()

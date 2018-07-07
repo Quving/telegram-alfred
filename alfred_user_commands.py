@@ -2,9 +2,8 @@
 import json
 
 from alfred_exceptions import AlfredFileWrongFormatException
-from alfred_user_memory import AlfredUserMemory
 from alfred_news_memory import AlfredNewsMemory
-from user import User
+from alfred_user_memory import AlfredUserMemory
 
 
 class AlfredUserCommands:
@@ -24,15 +23,6 @@ class AlfredUserCommands:
         datenschutz = AlfredUserCommands.get_text("datenschutz.json")
         update.message.reply_text(datenschutz)
 
-        user = update.message.from_user
-        # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
-
-        user_dict = {"id": str(user["id"]),
-                     "first_name": user["first_name"],
-                     "username": user["username"]}
-
-        user_obj = User(user_dict=user_dict)
-        AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
 
     @staticmethod
     def help(bot, update):
@@ -46,10 +36,8 @@ class AlfredUserCommands:
 
         user = AlfredUserCommands.alfred_user_memory.get_user_by_id(user_id)
         news_article = AlfredUserCommands.alfred_news_memory.get_neues(user.preferences)
-        # ich hoffe mal, du wolltest title, teaser-text und link haben :)
-        text = "{}\n{}\n{}".format(news_article['title'], news_article['teaser'], news_article['link'])
 
-        update.message.reply_text(text)
+        update.message.reply_text(news_article)
 
     @staticmethod
     def deaktivieren(bot, update):
