@@ -45,7 +45,9 @@ class AlfredUserCommands:
         user_id = str(user_tg["id"])
 
         user = AlfredUserCommands.alfred_user_memory.get_user_by_id(user_id)
-        text = AlfredUserCommands.alfred_news_memory.get_neues(user.preferences)
+        news_article = AlfredUserCommands.alfred_news_memory.get_neues(user.preferences)
+        # ich hoffe mal, du wolltest title, teaser-text und link haben :)
+        text = "{}\n{}\n{}".format(news_article['title'], news_article['teaser'], news_article['link'])
 
         update.message.reply_text(text)
 
