@@ -37,7 +37,7 @@ class AlfredDemo:
     @staticmethod
     def perform(update):
         AlfredDemo.more_inf_selected = False
-        time.sleep(3)
+        time.sleep(10)
         update.message.reply_text(AlfredDemo.text_1)
 
         update.message.reply_text("\nWeitere Informationen anzeigen?",
