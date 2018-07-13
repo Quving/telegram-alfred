@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from alfred_demo import AlfredDemo
+
 from alfred_news_memory import AlfredNewsMemory
 from alfred_user_memory import AlfredUserMemory
 
