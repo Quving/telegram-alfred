@@ -4,7 +4,7 @@ version: '0.0.1'
 description: alfred
 services:
   bot:
-    image: pingu/alfred:latest
+    image: pingu/telegram-alfred:latest
     links:
       - system/lb
       - db
