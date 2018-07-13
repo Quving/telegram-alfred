@@ -23,7 +23,6 @@ class AlfredUserCommands:
         datenschutz = AlfredUserCommands.get_text("datenschutz.json")
         update.message.reply_text(datenschutz)
 
-
     @staticmethod
     def help(bot, update):
         help = AlfredUserCommands.get_text("help.json")

@@ -69,7 +69,7 @@ class AlfredConversationHandler:
         user_obj = User(user_dict=user_dict)
         AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
         update.message.reply_text("Moin, " +
-                                  user["first_name"] +"!" +
+                                  user["first_name"] + "!" +
                                   "\nDarf ich mich vorstellen: Ich bin Alfred, ihr News-Bot’ler!"
                                   "\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
                                   reply_markup=AlfredConversationHandler.markup)

@@ -37,3 +37,4 @@ class AlfredNewsMemory:
         if "teaser" in news_article and "link" in news_article:
             text = news_article["teaser"] + "\n\n" + news_article["link"]
             return text
+
