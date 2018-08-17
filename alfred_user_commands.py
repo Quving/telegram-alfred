@@ -5,6 +5,8 @@ from alfred_exceptions import AlfredFileWrongFormatException
 from alfred_news_memory import AlfredNewsMemory
 from alfred_user_memory import AlfredUserMemory
 
+from user import User
+
 
 class AlfredUserCommands:
     alfred_user_memory = AlfredUserMemory()
@@ -21,7 +23,21 @@ class AlfredUserCommands:
     @staticmethod
     def start(bot, update):
         datenschutz = AlfredUserCommands.get_text("datenschutz.json")
+        user = update.message.from_user
+        if not AlfredUserCommands.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
+            user_dict = {"id": str(user["id"]),
+                         "first_name": user["first_name"],
+                         "username": user["username"],
+                         "preferences": {"region": "", "lokales": "", "rubrik": ""}}
+
+            user_obj = User(user_dict=user_dict)
+            AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
+            reply_text = "Willkommen " + user[
+                "first_name"] + "!\nUnter /help finden Sie alle Befehle, die Ihnen zur Verfügung stehen."
+        else:
+            reply_text = "Hallo, " + user["first_name"] + "!" + "\nWas möchten Sie tun?"
         update.message.reply_text(datenschutz)
+        update.message.reply_text(reply_text)
 
     @staticmethod
     def help(bot, update):

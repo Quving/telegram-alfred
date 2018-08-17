@@ -70,7 +70,8 @@ class ConvHandlerMenu:
         if not ConvHandlerMenu.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
             user_dict = {"id": str(user["id"]),
                          "first_name": user["first_name"],
-                         "username": user["username"]}
+                         "username": user["username"],
+                         "preferences": {"region": "", "lokales": "", "rubrik": ""}}
 
             user_obj = User(user_dict=user_dict)
             AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
@@ -90,7 +91,7 @@ class ConvHandlerMenu:
 
             user_obj = ConvHandlerMenu.alfred_user_memory.get_user_by_id(str(user["id"]))
             if not user_obj.preferences["region"]:
-                reply_text = "Es ist noch keine Region gesetzt."
+                reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
             else:
                 news_list = ConvHandlerMenu.ndrclient.fetch_region_news(user_obj.preferences["region"])
                 news = news_list[random.randint(0, len(news_list) - 1)]
@@ -103,7 +104,7 @@ class ConvHandlerMenu:
             update.message.reply_markdown(reply_text, reply_markup=ConvHandlerMenu.markup_menu)
 
         if text == ConvHandlerMenu.option3:
-            reply_text = "Geben Sie'/filter ein um zu den Filter Einstellungen zu gelangen."
+            reply_text = "Geben Sie /filter ein um zu den Filter Einstellungen zu gelangen."
             update.message.reply_markdown(reply_text)
 
         return ConvHandlerMenu.CHOOSING
