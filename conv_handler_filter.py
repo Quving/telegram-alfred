@@ -20,9 +20,10 @@ class ConvHandlerFilter:
     option1 = emoji.emojize(':earth_africa: Region setzen', use_aliases=True)
     option2 = emoji.emojize(':mag_right: Rubrik wählen', use_aliases=True)
     option3 = emoji.emojize(':pushpin: Lokales einstellen', use_aliases=True)
-    option4 = emoji.emojize(':heavy_check_mark: Fertig')
-    reply_keyboard = [[option1, option2], [option3, option4]]
-    markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+    option4 = emoji.emojize(':mag: Filter anzeigen', use_aliases=True)
+    option5 = emoji.emojize(':heavy_check_mark: Fertig', use_aliases=True)
+    reply_keyboard = [[option1, option2], [option3, option4], [option5]]
+    markup_filter = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
     # Add conversation handler with the states GENDER, PHOTO, LOCATION and BIO
     @staticmethod
@@ -34,6 +35,7 @@ class ConvHandlerFilter:
                 ConvHandlerFilter.CHOOSING: [RegexHandler('^(' + ConvHandlerFilter.option1 +
                                                           '|' + ConvHandlerFilter.option2 +
                                                           '|' + ConvHandlerFilter.option3 +
+                                                          '|' + ConvHandlerFilter.option4 +
                                                           ')$',
                                                           ConvHandlerFilter.regular_choice,
                                                           pass_user_data=True),
@@ -52,7 +54,7 @@ class ConvHandlerFilter:
                                                  ],
             },
 
-            fallbacks=[RegexHandler('^' + ConvHandlerFilter.option4 + '$', ConvHandlerFilter.done,
+            fallbacks=[RegexHandler('^' + ConvHandlerFilter.option5 + '$', ConvHandlerFilter.done,
                                     pass_user_data=True)]
         )
 
@@ -64,13 +66,14 @@ class ConvHandlerFilter:
         # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
         update.message.reply_text("\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
-                                  reply_markup=ConvHandlerFilter.markup)
+                                  reply_markup=ConvHandlerFilter.markup_filter)
 
         return ConvHandlerFilter.CHOOSING
 
     @staticmethod
     def regular_choice(bot, update, user_data):
         text = update.message.text
+        user = update.message.from_user
         user_data['choice'] = ConvHandlerFilter.get_key_from_option(text)
 
         # Region
@@ -84,7 +87,6 @@ class ConvHandlerFilter:
 
         # Lokales
         if text == ConvHandlerFilter.option3:
-
             key = ConvHandlerFilter.get_key_from_option(ConvHandlerFilter.option1)
             if key in user_data:
                 cities = Helper.cities_from_region(user_data[key])
@@ -92,11 +94,20 @@ class ConvHandlerFilter:
             else:
                 update.message.reply_markdown(
                     "Bevor Lokales eingestellt werden kann, muss die **Region** zuerst gesetzt sein.",
-                    reply_markup=ConvHandlerFilter.markup)
+                    reply_markup=ConvHandlerFilter.markup_filter)
                 return ConvHandlerFilter.CHOOSING
 
-        update.message.reply_text(
-            'Bitte geben Sie ihre Wahl für {} an.'.format(text), reply_markup=markup)
+        # Filter anzeigen
+        if text == ConvHandlerFilter.option4:
+            user_obj = ConvHandlerFilter.alfred_user_memory.get_user_by_id(str(user["id"]))
+            facts = ConvHandlerFilter.facts_to_str(user_obj.preferences)
+            reply_text = "*Dein Profil:*\n\n" + facts
+            update.message.reply_markdown(reply_text, reply_markup=ConvHandlerFilter.markup_filter)
+            return ConvHandlerFilter.CHOOSING
+
+        update.message.reply_markdown(
+            'Bitte geben Sie ihre Wahl für *{}* an.'
+                .format(ConvHandlerFilter.get_key_from_option(text).title()), reply_markup=markup)
 
         return ConvHandlerFilter.TYPING_REPLY
 
@@ -115,7 +126,7 @@ class ConvHandlerFilter:
         del user_data['choice']
 
         update.message.reply_text("{} gespeichert.".format(
-            ConvHandlerFilter.facts_to_str(user_data)), reply_markup=ConvHandlerFilter.markup)
+            ConvHandlerFilter.facts_to_str(user_data)), reply_markup=ConvHandlerFilter.markup_filter)
 
         return ConvHandlerFilter.CHOOSING
 
@@ -124,7 +135,7 @@ class ConvHandlerFilter:
         if 'choice' in user_data:
             del user_data['choice']
 
-        update.message.reply_text("Folgendes Profil wurde angelegt."
+        update.message.reply_markdown("*Folgendes Profil wurde angelegt.*\n"
                                   "{}\n\n{}".format(ConvHandlerFilter.facts_to_str(user_data),
                                                     "Geben Sie /menu ein um ins Menu zurückzukehren."))
 
@@ -143,19 +154,19 @@ class ConvHandlerFilter:
 
     @staticmethod
     def facts_to_str(user_data):
-        facts = list()
+        facts = ""
         for key, value in user_data.items():
             if key in ConvHandlerFilter.important_keys:
                 if key == "region":
-                    facts.append(':earth_africa: {} - {}'.format(key.title(), value.title()))
+                    facts += ':earth_africa: ' + key.title() + ': ' + value.title() + '\n'
                 elif key == "lokales":
-                    facts.append(':pushpin: {} - {}'.format(key.title(), value.title()))
+                    facts += ':pushpin: ' + key.title() + ': ' + value.title() + '\n'
                 elif key == "rubrik":
-                    facts.append(':mag: {} - {}'.format(key.title(), value.title()))
+                    facts += ':mag: ' + key.title() + ': ' + value.title() + '\n'
                 else:
                     pass
 
-        return emoji.emojize("\n".join(facts).join(['\n', '\n']), use_aliases=True)
+        return emoji.emojize(facts, use_aliases=True)
 
     @staticmethod
     def get_key_from_option(option):
@@ -165,6 +176,8 @@ class ConvHandlerFilter:
             key = "rubrik"
         elif option == ConvHandlerFilter.option3:
             key = "lokales"
+        elif option == ConvHandlerFilter.option4:
+            key = "filter"
         else:
             key = None
 

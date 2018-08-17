@@ -19,11 +19,9 @@ class ConvHandlerMenu:
     alfred_news_memory = AlfredNewsMemory()
     ndrclient = NdrClient()
     CHOOSING, TYPING_REPLY, TYPING_CHOICE = range(3)
-    option1 = emoji.emojize(':newspaper: News erhalten')
-    option2 = emoji.emojize(':mag: Filter anzeigen', use_aliases=True)
-    option3 = emoji.emojize(':wrench:Filter bearbeiten')
-    option4 = emoji.emojize(':heavy_multiplication_x: Beenden')
-    reply_keyboard_menu = [[option1, option2], [option3, option4]]
+    option1 = emoji.emojize(':newspaper: News!')
+    option2 = emoji.emojize(':mag: Mein Filter', use_aliases=True)
+    reply_keyboard_menu = [[option1, option2]]
 
     markup_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=True)
 
@@ -36,7 +34,6 @@ class ConvHandlerMenu:
             states={
                 ConvHandlerMenu.CHOOSING: [RegexHandler('^(' + ConvHandlerMenu.option1 +
                                                         '|' + ConvHandlerMenu.option2 +
-                                                        '|' + ConvHandlerMenu.option3 +
                                                         ')$',
                                                         ConvHandlerMenu.regular_choice,
                                                         pass_user_data=True),
@@ -55,7 +52,7 @@ class ConvHandlerMenu:
                                                ],
             },
 
-            fallbacks=[RegexHandler('^' + ConvHandlerMenu.option4 + '$', ConvHandlerMenu.done,
+            fallbacks=[RegexHandler('^' + ConvHandlerMenu.option2 + '$', ConvHandlerMenu.done,
                                     pass_user_data=True)]
         )
 
@@ -79,7 +76,7 @@ class ConvHandlerMenu:
             AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
             reply_text = "Willkommen {}! Bitte ".format(user["first_name"])
         else:
-            reply_text = "Hallo, " + user["first_name"] + "!" + "\nWas möchten Sie tun?"
+            reply_text = "Sie sind im Hauptmenu. Was möchten Sie tun?"
         update.message.reply_text(reply_text,
                                   reply_markup=ConvHandlerMenu.markup_menu)
 
@@ -103,12 +100,6 @@ class ConvHandlerMenu:
                     reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
             update.message.reply_markdown(reply_text, reply_markup=ConvHandlerMenu.markup_menu)
         if text == ConvHandlerMenu.option2:
-            user_obj = ConvHandlerMenu.alfred_user_memory.get_user_by_id(str(user["id"]))
-            facts = ConvHandlerMenu.facts_to_str(user_obj.preferences)
-            reply_text = "*Dein Profil:*\n\n" + facts
-            update.message.reply_markdown(reply_text, reply_markup=ConvHandlerMenu.markup_menu)
-
-        if text == ConvHandlerMenu.option3:
             reply_text = "Geben Sie /filter ein um zu den Filter Einstellungen zu gelangen."
             update.message.reply_markdown(reply_text)
 
@@ -134,22 +125,3 @@ class ConvHandlerMenu:
     def done(bot, update, user_data):
         update.message.reply_text("Auf Wiedersehen!")
         return ConversationHandler.END
-
-    @staticmethod
-    def facts_to_str(user_data):
-        facts = ""
-        for key, value in user_data.items():
-            if key in ConvHandlerFilter.important_keys:
-                if key == "region":
-                    facts += emoji.emojize(':earth_africa: ' + key.title() + ': ' + value.title() + '\n',
-                                           use_aliases=True)
-                elif key == "lokales":
-                    facts += emoji.emojize(':pushpin: ' + key.title() + ': ' + value.title() + '\n',
-                                           use_aliases=True)
-                elif key == "rubrik":
-                    facts += emoji.emojize(':mag: ' + key.title() + ': ' + value.title() + '\n',
-                                           use_aliases=True)
-                else:
-                    pass
-
-        return facts
