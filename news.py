@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import json
 import os
@@ -46,7 +45,7 @@ class News:
                                                     self.created_at,
                                                     self.teaser,
                                                     self.highlights,
-                                                    self.link)
+                                                    self.link.replace("_", "\_"))
         return str
 
     def to_json(self):
