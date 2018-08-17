@@ -1,7 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import json
 
-import requests
-from lxml import html
 from telegram import ReplyKeyboardMarkup
 
 
