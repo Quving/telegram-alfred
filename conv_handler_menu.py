@@ -94,8 +94,11 @@ class ConvHandlerMenu:
                 reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
             else:
                 news_list = ConvHandlerMenu.ndrclient.fetch_region_news(user_obj.preferences["region"])
-                news = news_list[random.randint(0, len(news_list) - 1)]
-                reply_text = news.to_string()
+                if news_list:
+                    news = news_list[random.randint(0, len(news_list) - 1)]
+                    reply_text = news.to_string()
+                else:
+                    reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
             update.message.reply_markdown(reply_text, reply_markup=ConvHandlerMenu.markup_menu)
         if text == ConvHandlerMenu.option2:
             user_obj = ConvHandlerMenu.alfred_user_memory.get_user_by_id(str(user["id"]))
@@ -107,6 +110,7 @@ class ConvHandlerMenu:
             reply_text = "Geben Sie /filter ein um zu den Filter Einstellungen zu gelangen."
             update.message.reply_markdown(reply_text)
 
+            return ConversationHandler.END
         return ConvHandlerMenu.CHOOSING
 
     @staticmethod
@@ -126,17 +130,7 @@ class ConvHandlerMenu:
 
     @staticmethod
     def done(bot, update, user_data):
-
         update.message.reply_text("Auf Wiedersehen!")
-
-        user = update.message.from_user
-        user_id = str(user["id"])
-        user_obj = ConvHandlerMenu.alfred_user_memory.get_user_by_id(user_id=user_id)
-
-        user_obj.preferences = user_data
-        ConvHandlerMenu.alfred_user_memory.upsert_user(user=user_obj)
-
-        user_data.clear()
         return ConversationHandler.END
 
     @staticmethod
