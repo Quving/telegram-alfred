@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import emoji
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import (CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
@@ -6,51 +7,52 @@ from telegram.ext import (CommandHandler, MessageHandler, Filters, RegexHandler,
 from alfred_news_memory import AlfredNewsMemory
 from alfred_user_commands import AlfredUserCommands
 from alfred_user_memory import AlfredUserMemory
+from helper import Helper
 from user import User
 
 
-class AlfredConversationHandler:
+class ConvHandlerFilter:
     alfred_user_memory = AlfredUserMemory()
     alfred_news_memory = AlfredNewsMemory()
+    important_keys = ["region", "lokales", "rubrik"]
 
     CHOOSING, TYPING_REPLY, TYPING_CHOICE = range(3)
-    option1 = 'Region'
-    option2 = 'Rubrik'
-    option3 = 'Lokales'
-    option4 = 'Fertig'
+    option1 = emoji.emojize(':earth_africa: Region setzen', use_aliases=True)
+    option2 = emoji.emojize(':mag_right: Rubrik wählen', use_aliases=True)
+    option3 = emoji.emojize(':pushpin: Lokales einstellen', use_aliases=True)
+    option4 = emoji.emojize(':heavy_check_mark: Fertig')
     reply_keyboard = [[option1, option2], [option3, option4]]
-
     markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
 
     # Add conversation handler with the states GENDER, PHOTO, LOCATION and BIO
     @staticmethod
-    def get_conversation_hander():
+    def conv_handler(hook):
         conv_handler = ConversationHandler(
-            entry_points=[CommandHandler('start', AlfredConversationHandler.start)],
+            entry_points=[CommandHandler(hook, ConvHandlerFilter.start)],
 
             states={
-                AlfredConversationHandler.CHOOSING: [RegexHandler('^(' + AlfredConversationHandler.option1 +
-                                                                  '|' + AlfredConversationHandler.option2 +
-                                                                  '|' + AlfredConversationHandler.option3 +
-                                                                  ')$',
-                                                                  AlfredConversationHandler.regular_choice,
-                                                                  pass_user_data=True),
-                                                     RegexHandler('^Something else...$',
-                                                                  AlfredConversationHandler.custom_choice),
-                                                     ],
+                ConvHandlerFilter.CHOOSING: [RegexHandler('^(' + ConvHandlerFilter.option1 +
+                                                          '|' + ConvHandlerFilter.option2 +
+                                                          '|' + ConvHandlerFilter.option3 +
+                                                          ')$',
+                                                          ConvHandlerFilter.regular_choice,
+                                                          pass_user_data=True),
+                                             RegexHandler('^Something else...$',
+                                                          ConvHandlerFilter.custom_choice),
+                                             ],
 
-                AlfredConversationHandler.TYPING_CHOICE: [MessageHandler(Filters.text,
-                                                                         AlfredConversationHandler.regular_choice,
-                                                                         pass_user_data=True),
-                                                          ],
+                ConvHandlerFilter.TYPING_CHOICE: [MessageHandler(Filters.text,
+                                                                 ConvHandlerFilter.regular_choice,
+                                                                 pass_user_data=True),
+                                                  ],
 
-                AlfredConversationHandler.TYPING_REPLY: [MessageHandler(Filters.text,
-                                                                        AlfredConversationHandler.received_information,
-                                                                        pass_user_data=True),
-                                                         ],
+                ConvHandlerFilter.TYPING_REPLY: [MessageHandler(Filters.text,
+                                                                ConvHandlerFilter.received_information,
+                                                                pass_user_data=True),
+                                                 ],
             },
 
-            fallbacks=[RegexHandler('^' + AlfredConversationHandler.option4 + '$', AlfredConversationHandler.done,
+            fallbacks=[RegexHandler('^' + ConvHandlerFilter.option4 + '$', ConvHandlerFilter.done,
                                     pass_user_data=True)]
         )
 
@@ -58,39 +60,52 @@ class AlfredConversationHandler:
 
     @staticmethod
     def start(bot, update):
-
         user = update.message.from_user
         # user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
-        user_dict = {"id": str(user["id"]),
-                     "first_name": user["first_name"],
-                     "username": user["username"]}
+        update.message.reply_text("\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
+                                  reply_markup=ConvHandlerFilter.markup)
 
-        user_obj = User(user_dict=user_dict)
-        AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
-        update.message.reply_text("Moin, " +
-                                  user["first_name"] + "!" +
-                                  "\nDarf ich mich vorstellen: Ich bin Alfred, ihr News-Bot’ler!"
-                                  "\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
-                                  reply_markup=AlfredConversationHandler.markup)
-
-        return AlfredConversationHandler.CHOOSING
+        return ConvHandlerFilter.CHOOSING
 
     @staticmethod
     def regular_choice(bot, update, user_data):
         text = update.message.text
-        user_data['choice'] = text.lower()
-        update.message.reply_text(
-            'Bitte geben Sie ihre Wahl für {} an.'.format(text))
+        user_data['choice'] = ConvHandlerFilter.get_key_from_option(text)
 
-        return AlfredConversationHandler.TYPING_REPLY
+        # Region
+        if text == ConvHandlerFilter.option1:
+            markup = Helper.create_replykeyboardmarkup(
+                ["Hamburg", "Niedersachen", "Mecklenburg-Vorpommern", "Schleswig-Holstein"])
+
+        # Rubrik
+        if text == ConvHandlerFilter.option2:
+            markup = Helper.create_replykeyboardmarkup(["Sport", "Kultur"])
+
+        # Lokales
+        if text == ConvHandlerFilter.option3:
+
+            key = ConvHandlerFilter.get_key_from_option(ConvHandlerFilter.option1)
+            if key in user_data:
+                cities = Helper.cities_from_region(user_data[key])
+                markup = Helper.create_replykeyboardmarkup(cities)
+            else:
+                update.message.reply_markdown(
+                    "Bevor Lokales eingestellt werden kann, muss die **Region** zuerst gesetzt sein.",
+                    reply_markup=ConvHandlerFilter.markup)
+                return ConvHandlerFilter.CHOOSING
+
+        update.message.reply_text(
+            'Bitte geben Sie ihre Wahl für {} an.'.format(text), reply_markup=markup)
+
+        return ConvHandlerFilter.TYPING_REPLY
 
     @staticmethod
     def custom_choice(bot, update):
         update.message.reply_text('Alright, please send me the category first, '
                                   'for example "Most impressive skill"')
 
-        return AlfredConversationHandler.TYPING_CHOICE
+        return ConvHandlerFilter.TYPING_CHOICE
 
     @staticmethod
     def received_information(bot, update, user_data):
@@ -100,9 +115,9 @@ class AlfredConversationHandler:
         del user_data['choice']
 
         update.message.reply_text("{} gespeichert.".format(
-            AlfredConversationHandler.facts_to_str(user_data)), reply_markup=AlfredConversationHandler.markup)
+            ConvHandlerFilter.facts_to_str(user_data)), reply_markup=ConvHandlerFilter.markup)
 
-        return AlfredConversationHandler.CHOOSING
+        return ConvHandlerFilter.CHOOSING
 
     @staticmethod
     def done(bot, update, user_data):
@@ -110,14 +125,18 @@ class AlfredConversationHandler:
             del user_data['choice']
 
         update.message.reply_text("Folgendes Profil wurde angelegt."
-                                  "{}".format(AlfredConversationHandler.facts_to_str(user_data)))
+                                  "{}\n\n".format(ConvHandlerFilter.facts_to_str(user_data),
+                                                  "Geben Sie /menu ein um ins Menu zurückzukehren."))
 
         user = update.message.from_user
         user_id = str(user["id"])
-        user_obj = AlfredConversationHandler.alfred_user_memory.get_user_by_id(user_id=user_id)
+        user_obj = ConvHandlerFilter.alfred_user_memory.get_user_by_id(user_id=user_id)
 
-        user_obj.preferences = user_data
-        AlfredConversationHandler.alfred_user_memory.upsert_user(user=user_obj)
+        for key in ConvHandlerFilter.important_keys:
+            if key in user_data:
+                data = user_data[key]
+                user_obj.preferences[key] = data
+        ConvHandlerFilter.alfred_user_memory.upsert_user(user=user_obj)
 
         user_data.clear()
         return ConversationHandler.END
@@ -125,8 +144,28 @@ class AlfredConversationHandler:
     @staticmethod
     def facts_to_str(user_data):
         facts = list()
-
         for key, value in user_data.items():
-            facts.append('{} - {}'.format(key, value))
+            if key in ConvHandlerFilter.important_keys:
+                if key == "region":
+                    facts.append(':earth_africa: {} - {}'.format(key.title(), value.title()))
+                elif key == "lokales":
+                    facts.append(':pushpin: {} - {}'.format(key.title(), value.title()))
+                elif key == "rubrik":
+                    facts.append(':mag: {} - {}'.format(key.title(), value.title()))
+                else:
+                    pass
 
-        return "\n".join(facts).join(['\n', '\n'])
+        return emoji.emojize("\n".join(facts).join(['\n', '\n']), use_aliases=True)
+
+    @staticmethod
+    def get_key_from_option(option):
+        if option == ConvHandlerFilter.option1:
+            key = "region"
+        elif option == ConvHandlerFilter.option2:
+            key = "rubrik"
+        elif option == ConvHandlerFilter.option3:
+            key = "lokales"
+        else:
+            key = None
+
+        return key

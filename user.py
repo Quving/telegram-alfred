@@ -7,8 +7,9 @@ class User:
         self.id = self.__get_user_dict_attribute(key="id", default="")
         self.username = self.__get_user_dict_attribute(key="username", default="")
         self.first_name = self.__get_user_dict_attribute(key="first_name", default="")
-        self.preferences = self.__get_user_dict_attribute(key="preferences", default={})
-
+        self.preferences = self.__get_user_dict_attribute(key="preferences", default={"region": "unknown",
+                                                                                      "rubrik": "unknown",
+                                                                                      "lokales": "unknown"})
 
     def __get_user_dict_attribute(self, key, default=None):
         """
@@ -24,7 +25,6 @@ class User:
         else:
             return self.user_dict[key]
 
-
     def to_dict(self):
         """
         Returns a dictionary object that represent the User object.
@@ -36,5 +36,3 @@ class User:
                 "preferences": self.preferences}
 
         return data
-
-

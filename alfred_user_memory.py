@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import os
-from alfred_exceptions import UserNotFoundException
+
 from pymongo import MongoClient
+
+from alfred_exceptions import UserNotFoundException
 from user import User
 
 
@@ -37,15 +39,16 @@ class AlfredUserMemory:
         user = User(user_dict=user_dict)
         return user
 
-    def user_exist_by_id(self, id):
+    def user_exist_by_id(self, user_id_str):
         """
         Returns true, if user exist. Else False.
 
-        :param id:
+        :param user_id_str:
         :return:
         """
-        user_db = self.mongo.afred.user
-        return not user_db.find_one({"id": str(id)}) is None
+        user_db = self.mongo.alfred.user
+        query = user_db.find_one({"id": user_id_str})
+        return not query is None
 
     def upsert_user(self, user):
         """
@@ -60,7 +63,7 @@ class AlfredUserMemory:
 
         id = user.id
         user_dict = user.to_dict()
-
+        print(user_dict)
         user_db = self.mongo.alfred.user
 
         key = {"id": id}

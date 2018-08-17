@@ -5,9 +5,10 @@ import os
 
 from telegram.ext import Updater, CommandHandler
 
-from alfred_user_commands import AlfredUserCommands
 from alfred_exceptions import BotTokenNotSetException
-from alfred_conversation_handler import AlfredConversationHandler, MessageHandler, Filters
+from alfred_user_commands import AlfredUserCommands
+from conv_handler_filter import ConvHandlerFilter
+from conv_handler_menu import ConvHandlerMenu
 
 
 class Alfred:
@@ -28,15 +29,14 @@ class Alfred:
 
         # User Commands
         dp.add_handler(CommandHandler("help", AlfredUserCommands.help))
-        # dp.add_handler(CommandHandler("start", AlfredUserCommands.start))
-        dp.add_handler(CommandHandler("neues", AlfredUserCommands.neues))
         dp.add_handler(CommandHandler("deaktivieren", AlfredUserCommands.deaktivieren))
         dp.add_handler(CommandHandler("aktivieren", AlfredUserCommands.aktivieren))
         dp.add_handler(CommandHandler("weitere_nachricht", AlfredUserCommands.weitere_nachricht))
-        dp.add_handler(CommandHandler("naechste_rubrik", AlfredUserCommands.naechste_rubrik))
 
         # User Commands - Filter
-        dp.add_handler(AlfredConversationHandler.get_conversation_hander())
+        dp.add_handler(ConvHandlerFilter.conv_handler("filter"))
+        dp.add_handler(ConvHandlerMenu.conv_handler("start"))
+        dp.add_handler(ConvHandlerMenu.conv_handler("menu"))
 
         # Log errors.
         dp.add_error_handler(self.error)
