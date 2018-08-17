@@ -5,7 +5,7 @@ import json
 cities = {}
 cities["mecklenburg-vorpommern"] = ["Rostock", "Schwerin", "Neubrandenburg", "Stralsund", "Greifswald", "Wismar",
                                     "Güstrow", "Waren (Müritz)", "Neustrelitz"]
-cities["hamburg"] = ["hamburg"]
+cities["hamburg"] = ["Hamburg"]
 cities["schleswig-holstein"] = ["Kiel", "Lübeck", "Flensburg", "Neumünster", "Norderstedt", "Elmshorn", "Pinneberg",
                                 "Wedel", "Ahrensburg", "Itzehoe", "Geesthacht", "Rendsburg", "Henstedt-Ulzburg(*)",
                                 "Reinbek", "Bad Oldesloe", "Schleswig", "Husum  25.055", "Eckernförde", "Heide  22.950",

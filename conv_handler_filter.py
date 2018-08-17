@@ -80,7 +80,7 @@ class ConvHandlerFilter:
 
         # Rubrik
         if text == ConvHandlerFilter.option2:
-            markup = Helper.create_replykeyboardmarkup(["Sport", "Kultur"])
+            markup = Helper.create_replykeyboardmarkup(["Sport", "Kultur", "Nachrichten", "Ratgeber"])
 
         # Lokales
         if text == ConvHandlerFilter.option3:
@@ -125,8 +125,8 @@ class ConvHandlerFilter:
             del user_data['choice']
 
         update.message.reply_text("Folgendes Profil wurde angelegt."
-                                  "{}\n\n".format(ConvHandlerFilter.facts_to_str(user_data),
-                                                  "Geben Sie /menu ein um ins Menu zurückzukehren."))
+                                  "{}\n\n{}".format(ConvHandlerFilter.facts_to_str(user_data),
+                                                    "Geben Sie /menu ein um ins Menu zurückzukehren."))
 
         user = update.message.from_user
         user_id = str(user["id"])
