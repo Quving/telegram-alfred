@@ -76,7 +76,7 @@ class ConvHandlerFilter:
         # Region
         if text == ConvHandlerFilter.option1:
             markup = Helper.create_replykeyboardmarkup(
-                ["Hamburg", "Niedersachen", "Mecklenburg-Vorpommern", "Schleswig-Holstein"])
+                ["Hamburg", "Niedersachsen", "Mecklenburg-Vorpommern", "Schleswig-Holstein"])
 
         # Rubrik
         if text == ConvHandlerFilter.option2:
