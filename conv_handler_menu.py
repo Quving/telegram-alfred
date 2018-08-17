@@ -71,11 +71,13 @@ class ConvHandlerMenu:
             user_dict = {"id": str(user["id"]),
                          "first_name": user["first_name"],
                          "username": user["username"],
-                         "preferences": {"region": "", "lokales": "", "rubrik": ""}}
+                         "preferences": {"region": "",
+                                         "lokales": "",
+                                         "rubrik": ""}}
 
             user_obj = User(user_dict=user_dict)
             AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
-            reply_text = "Willkommen" + user["first_name"] + "!"
+            reply_text = "Willkommen {}! Bitte ".format(user["first_name"])
         else:
             reply_text = "Hallo, " + user["first_name"] + "!" + "\nWas möchten Sie tun?"
         update.message.reply_text(reply_text,

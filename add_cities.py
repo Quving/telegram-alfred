@@ -10,7 +10,7 @@ cities["schleswig-holstein"] = ["Kiel", "Lübeck", "Flensburg", "Neumünster", "
                                 "Wedel", "Ahrensburg", "Itzehoe", "Geesthacht", "Rendsburg", "Henstedt-Ulzburg(*)",
                                 "Reinbek", "Bad Oldesloe", "Schleswig", "Husum  25.055", "Eckernförde", "Heide  22.950",
                                 "Kaltenkirchen", "Quickborn", "Bad Schwartau"]
-cities["niedersachen"] = ["Hannover", "Braunschweig", "Oldenburg", "Osnabrück", "Wolfsburg", "Göttingen", "Salzgitter",
+cities["niedersachsen"] = ["Hannover", "Braunschweig", "Oldenburg", "Osnabrück", "Wolfsburg", "Göttingen", "Salzgitter",
                           "Hildesheim", "Delmenhorst", "Wilhelmshaven", "Lüneburg", "Celle", "Garbsen", "Hameln",
                           "Lingen (Ems)", "Langenhagen", "Nordhorn", "Wolfenbüttel", "Goslar", "Emden", "Peine",
                           "Cuxhaven", "Stade", "Melle", "Neustadt am Rübenberge", "Lehrte", "Gifhorn", "Aurich",

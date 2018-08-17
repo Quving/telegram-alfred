@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 
 import json
 import os
@@ -131,7 +131,7 @@ class NdrClient:
 
     def crawl_highlights(self, ndr_link):
         page = requests.get(ndr_link)
-        tree = html.fromstring(page.content)
+        tree = html.fromstring(page.text)
         reply = []
         for xs in tree.cssselect('article h3'):
             if xs.text:

@@ -29,9 +29,9 @@ class Alfred:
 
         # User Commands
         dp.add_handler(CommandHandler("help", AlfredUserCommands.help))
-        dp.add_handler(CommandHandler("pushoff", AlfredUserCommands.deaktivieren))
+        dp.add_handler(CommandHandler("pushoff", AlfredUserCommands.pushoff))
         dp.add_handler(CommandHandler("start", AlfredUserCommands.start))
-        dp.add_handler(CommandHandler("pushon", AlfredUserCommands.aktivieren))
+        dp.add_handler(CommandHandler("pushon", AlfredUserCommands.pushon))
 
         # User Commands - Filter
         dp.add_handler(ConvHandlerFilter.conv_handler("filter"))
