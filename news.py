@@ -1,13 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import json
+import os
+
+import pymongo
 import requests
 import untangle
-import pymongo
-import os
-import json
+from lxml import html
 
 
 class News:
 
-    def __init__(self, source, region, tags, title, teaser, link, image_link):
+    def __init__(self, source, region, tags, title, teaser, link, image_link, created_at, highlights):
         self.read_by_users = []
         self.source = source
         self.region = region
@@ -16,6 +20,8 @@ class News:
         self.teaser = teaser
         self.link = link  # the link to the article
         self.image_link = image_link
+        self.created_at = created_at
+        self.highlights = highlights
 
     def __eq__(self, o):
         result = type(self) == type(o)
@@ -26,6 +32,8 @@ class News:
         result = result and self.teaser == o.teaser
         result = result and self.link == o.link
         result = result and self.image_link == o.image_link
+        result = result and self.created_at == o.created_at
+        result = result and self.highlights == o.highlights
         print(result)
         return result
 
@@ -33,10 +41,11 @@ class News:
         return not self == other
 
     def to_string(self):
-        str = "*{}*\n\n{}\n\n{}".format(self.title,
-                                        self.teaser,
-                                        self.link )
-        print(self.image_link)
+        str = "*{}*\n_{}_\n\n{}\n\n{}\n\n{}".format(self.title,
+                                                    self.created_at,
+                                                    self.teaser,
+                                                    self.highlights,
+                                                    self.link)
         return str
 
     def to_json(self):
@@ -102,10 +111,32 @@ class NdrClient:
                     title=try_to_extract(news_item, lambda x: x.title.cdata, ""),
                     teaser=try_to_extract(news_item, lambda x: x.description.cdata, ""),
                     link=try_to_extract(news_article, link_extractor, ""),
-                    image_link=try_to_extract(news_item, lambda x: x.mp_image.mp_data.cdata, "")
+                    image_link=try_to_extract(news_item, lambda x: x.mp_image.mp_data.cdata, ""),
+                    created_at=self.crawl_updatet_at(
+                        ndr_link=try_to_extract(news_article, link_extractor, "")),
+                    highlights=self.crawl_highlights(
+                        ndr_link=try_to_extract(news_article, link_extractor, ""))
                 )
                 result.append(n)
         return result
+
+    def crawl_updatet_at(self, ndr_link):
+        page = requests.get(ndr_link)
+        tree = html.fromstring(page.content)
+        reply = []
+        for xs in tree.cssselect('div.lastchanged'):
+            if xs.text:
+                return xs.text.rstrip()
+
+    def crawl_highlights(self, ndr_link):
+        page = requests.get(ndr_link)
+        tree = html.fromstring(page.content)
+        reply = []
+        for xs in tree.cssselect('article h3'):
+            if xs.text:
+                reply.append(xs.text.rstrip())
+
+        return "\n- ".join(reply).join(["- ", "\n"])
 
 
 class TagesschauClient:

@@ -1,5 +1,7 @@
 import json
 
+import requests
+from lxml import html
 from telegram import ReplyKeyboardMarkup
 
 
