@@ -90,7 +90,7 @@ class ConvHandlerMenu:
         if text == ConvHandlerMenu.option1:
 
             user_obj = ConvHandlerMenu.alfred_user_memory.get_user_by_id(str(user["id"]))
-            if not user_obj.preferences["region"]:
+            if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
                 reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
             else:
                 news_list = ConvHandlerMenu.ndrclient.fetch_region_news(user_obj.preferences["region"])
