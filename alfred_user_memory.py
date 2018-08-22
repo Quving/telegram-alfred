@@ -63,7 +63,6 @@ class AlfredUserMemory:
 
         id = user.id
         user_dict = user.to_dict()
-        print(user_dict)
         user_db = self.mongo.alfred.user
 
         key = {"id": id}
