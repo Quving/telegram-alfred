@@ -27,7 +27,6 @@ class ConvHandlerMenu:
 		self.MENU_CHOOSING, self.MENUTYPING_REPLY, self.MENU_TYPING_CHOICE, \
 		self.FILTER_CHOOSING, self.FILTERTYPING_REPLY, self.FILTER_TYPING_CHOICE = range(6)
 
-		#
 		# Menu Elements
 		self.menu_option1 = emoji.emojize(':newspaper: News!')
 		self.menu_option2 = emoji.emojize(':mag: Mein Filter', use_aliases=True)
@@ -42,26 +41,34 @@ class ConvHandlerMenu:
 		self.filter_option4 = emoji.emojize(':mag: Filter anzeigen', use_aliases=True)
 		self.filter_option5 = emoji.emojize(':heavy_check_mark: Fertig', use_aliases=True)
 		self.filter_reply_keyboard = [[self.filter_option1, self.filter_option2],
-		                              [self.filter_option3, self.filter_option4],
-		                              [self.filter_option5]]
+		                              [self.filter_option3, self.filter_option4], [self.filter_option5]]
 		self.filter_markup = ReplyKeyboardMarkup(self.filter_reply_keyboard, one_time_keyboard=True)
 
-		#
 		# States (Menu + Filter)
 		self.states = {
 			self.FILTER_CHOOSING: [RegexHandler('^(' + self.filter_option1 + '|' + self.filter_option2 +
 			                                    '|' + self.filter_option3 + '|' + self.filter_option4 + ')$',
 			                                    self.filter_regular_choice, pass_user_data=True)],
+
 			self.FILTER_TYPING_CHOICE: [MessageHandler(Filters.text, self.filter_regular_choice, pass_user_data=True)],
-			self.FILTERTYPING_REPLY: [MessageHandler(Filters.text, self.received_information, pass_user_data=True)],
-			self.MENU_CHOOSING: [
-				RegexHandler('^(' + self.menu_option1 + ')$', self.menu_regular_choice, pass_user_data=True)],
+
+			self.FILTERTYPING_REPLY: [
+				MessageHandler(Filters.text, self.filter_received_information, pass_user_data=True)],
+
+			self.MENU_CHOOSING: [RegexHandler('^(' + self.menu_option1 + ')$', self.menu_regular_choice,
+			                                  pass_user_data=True)],
 			self.MENU_TYPING_CHOICE: [MessageHandler(Filters.text, self.menu_regular_choice, pass_user_data=True)],
+
 			self.MENUTYPING_REPLY: [MessageHandler(Filters.text, self.menu_received_information, pass_user_data=True)]}
 
 	def menu_start(self, bot, update):
+		"""
+		Menu entrypoint.
+		:param bot:
+		:param update:
+		:return:
+		"""
 		user = update.message.from_user
-		# user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
 
 		if not self.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
 			user_dict = {"id": str(user["id"]),
@@ -83,6 +90,13 @@ class ConvHandlerMenu:
 		return self.MENU_CHOOSING
 
 	def menu_regular_choice(self, bot, update, user_data):
+		"""
+		Handles options chosen in menu.
+		:param bot:
+		:param update:
+		:param user_data:
+		:return:
+		"""
 		text = update.message.text
 		user = update.message.from_user
 		if text == self.menu_option1:
@@ -99,30 +113,49 @@ class ConvHandlerMenu:
 
 			update.message.reply_markdown(reply_text, reply_markup=self.menu_markup)
 
+		else:
+			reply_text = "Unbekannter Befehl."
+			update.message.reply_markdown(reply_text, reply_markup=self.menu_markup)
+
 		return self.MENU_CHOOSING
 
 	def menu_received_information(self, bot, update, user_data):
-		text = update.message.text
-
 		update.message.reply_text("Unbekannte Aktion.")
 
 		return self.MENU_CHOOSING
 
 	def menu_done(self, bot, update, user_data):
+		"""
+		Switch to Filter.
+		:param bot:
+		:param update:
+		:param user_data:
+		:return:
+		"""
 		return self.filter_start(bot, update)
 
 	def filter_start(self, bot, update):
-		user = update.message.from_user
-		# user : {'id': 120745084, 'first_name': 'Vinh', 'is_bot': False, 'username': 'Vinguin', 'language_code': 'en-GB'}
-
-		update.message.reply_text("\nBitte konfigurieren Sie jetzt Ihre News-Präferenzen.",
+		"""
+		Entrypoint for filter-menu
+		:param bot:
+		:param update:
+		:return:
+		"""
+		reply_text = "Bitte konfigurieren Sie jetzt Ihre News-Präferenzen."
+		update.message.reply_text(reply_text,
 		                          reply_markup=self.filter_markup)
 
 		return self.FILTER_CHOOSING
 
 	def filter_regular_choice(self, bot, update, user_data):
+		"""
+		Handles chosen option in filter-menu.
+		:param bot:
+		:param update:
+		:param user_data:
+		:return:
+		"""
 		text = update.message.text
-		user = update.message.from_user
 		user_data['choice'] = self.get_key_from_option(text)
 
 		# Region
@@ -148,6 +181,7 @@ class ConvHandlerMenu:
 
 		# Filter anzeigen
 		if text == self.filter_option4:
+			user = update.message.from_user
 			user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
 			facts = self.facts_to_str(user_obj.preferences)
 			reply_text = "*Dein Profil:*\n\n" + facts
@@ -160,7 +194,14 @@ class ConvHandlerMenu:
 
 		return self.FILTERTYPING_REPLY
 
-	def received_information(self, bot, update, user_data):
+	def filter_received_information(self, bot, update, user_data):
+		"""
+		Handles user choice.
+		:param bot:
+		:param update:
+		:param user_data:
+		:return:
+		"""
 		text = update.message.text
 		category = user_data['choice']
 		user_data[category] = text.lower()
@@ -172,11 +213,21 @@ class ConvHandlerMenu:
 		return self.FILTER_CHOOSING
 
 	def filter_done(self, bot, update, user_data):
+		"""
+		Finish filter-menu.
+		:param bot:
+		:param update:
+		:param user_data:
+		:return:
+		"""
 		if 'choice' in user_data:
 			del user_data['choice']
 
-		update.message.reply_markdown("*Folgendes Profil wurde angelegt.*\n"
-		                              "{}".format(self.facts_to_str(user_data)))
+		reply_text = "An Ihrem Profil hat sich nichts geändert."
+		if self.facts_to_str(user_data):
+			reply_text = "*Folgendes Profil wurde angelegt.*\n{}".format(self.facts_to_str(user_data))
+
+		update.message.reply_markdown(reply_text)
 
 		user = update.message.from_user
 		user_id = str(user["id"])
@@ -192,17 +243,20 @@ class ConvHandlerMenu:
 		return self.menu_start(bot, update)
 
 	def facts_to_str(self, user_data):
+		"""
+		Summerizes the current user selection to printable text.
+		:param user_data:
+		:return:
+		"""
 		facts = ""
 		for key, value in user_data.items():
 			if key in self.important_keys:
 				if key == "region":
-					facts += ':earth_africa: ' + key.title() + ': ' + value.title() + '\n'
+					facts += ':earth_africa: {}: {}\n'.format(key.title(), value.title())
 				elif key == "lokales":
-					facts += ':pushpin: ' + key.title() + ': ' + value.title() + '\n'
+					facts += ':pushpin: {}: {}\n'.format(key.title(), value.title())
 				elif key == "rubrik":
-					facts += ':mag: ' + key.title() + ': ' + value.title() + '\n'
-				else:
-					pass
+					facts += ':mag: {}: {}\n'.format(key.title(), value.title())
 
 		return emoji.emojize(facts, use_aliases=True)
 
