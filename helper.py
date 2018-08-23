@@ -12,7 +12,7 @@ class Helper():
         cities = json.load(f)
 
     @staticmethod
-    def create_replykeyboardmarkup(args):
+    def create_replykeyboardmarkup(args, one_time_keyboard=False):
         """
         Creates a markup.
         :param args:
@@ -27,7 +27,8 @@ class Helper():
                 reply_keyboard.append([args[i], args[i + 1]])
 
             reply_keyboard.append([args[-1]])
-        markup = ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        markup = ReplyKeyboardMarkup(reply_keyboard,
+                                     one_time_keyboard=one_time_keyboard)
         return markup
 
     @staticmethod
