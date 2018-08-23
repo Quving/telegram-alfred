@@ -3,6 +3,7 @@
 
 import json
 
+import emoji
 from telegram import ReplyKeyboardMarkup
 
 
@@ -35,3 +36,12 @@ class Helper():
             return []
         else:
             return Helper.cities[region]
+
+    @staticmethod
+    def to_emoji_str(text):
+        """
+
+        :param text:
+        :return:
+        """
+        return emoji.emojize(text, use_aliases=True)
