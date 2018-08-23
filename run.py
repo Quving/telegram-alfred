@@ -24,7 +24,10 @@ def check_envs():
 
 
 if __name__ == "__main__":
+    # Run checks.
     check_envs()
+
+    # Launch 'Alfred'.
     alfred = Alfred()
     alfred.add_commands()
     alfred.add_menus()
