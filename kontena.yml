@@ -9,6 +9,8 @@ services:
       - system/lb
       - db
     instances: 1
+    environment:
+      - ALFRED_MONGO_DB_HOST=db
     secrets:
       - secret: ALFRED_BOT_TOKEN
         name: ALFRED_BOT_TOKEN

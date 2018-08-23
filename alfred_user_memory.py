@@ -1,69 +1,56 @@
 #!/usr/bin/env python3
-import os
-
-from pymongo import MongoClient
 
 from alfred_exceptions import UserNotFoundException
+from alfred_memory import AlfredMemory
 from user import User
 
 
-class AlfredUserMemory:
-	def __init__(self):
-		self.mongo = self.get_mongo_client()
+class AlfredUserMemory(AlfredMemory):
+    def __init__(self):
+        self.mongo_client = super(AlfredUserMemory, self).get_mongo_client()
 
-	def get_mongo_client(self):
-		"""
-		Returns a MongoClient object with the specified database host.
+    def get_user_by_id(self, user_id):
+        """
+        Returns an object of instance User if exist.
+        If not exist, raise UserNotFoundException
+        :param user_id:
+        :return:
+        """
+        id = str(user_id)
 
-		:return:
-		"""
-		mongo_host = os.getenv("ALFRED_MONGO_DB_HOST", "db")
-		client = MongoClient("mongodb://" + mongo_host)
+        user_db = self.mongo_client.alfred.user
+        user_dict = user_db.find_one({"id": id})
+        if user_dict is None:
+            raise UserNotFoundException("User " + id + " does not exist.")
 
-		return client
+        user = User(user_dict=user_dict)
+        return user
 
-	def get_user_by_id(self, user_id):
-		"""
-		Returns an object of instance User if exist.
-		If not exist, raise UserNotFoundException
-		:param user_id:
-		:return:
-		"""
-		id = str(user_id)
+    def user_exist_by_id(self, user_id_str):
+        """
+        Returns true, if user exist. Else False.
 
-		user_db = self.mongo.alfred.user
-		user_dict = user_db.find_one({"id": id})
-		if user_dict is None:
-			raise UserNotFoundException("User " + id + " does not exist.")
+        :param user_id_str:
+        :return:
+        """
+        user_db = self.mongo_client.alfred.user
+        query = user_db.find_one({"id": user_id_str})
+        return not query is None
 
-		user = User(user_dict=user_dict)
-		return user
+    def upsert_user(self, user):
+        """
+        Add user to db if user does not exist. Otherwise update the existing user."
+        User will be identified by the id that is given by telegram.
 
-	def user_exist_by_id(self, user_id_str):
-		"""
-		Returns true, if user exist. Else False.
+        :return:
+        """
 
-		:param user_id_str:
-		:return:
-		"""
-		user_db = self.mongo.alfred.user
-		query = user_db.find_one({"id": user_id_str})
-		return not query is None
+        if not isinstance(user, User):
+            raise ValueError("Expected user object. Given " + str(type(dict)))
 
-	def upsert_user(self, user):
-		"""
-		Add user to db if user does not exist. Otherwise update the existing user."
-		User will be identified by the id that is given by telegram.
+        id = user.id
+        user_dict = user.to_dict()
+        user_db = self.mongo_client.alfred.user
 
-		:return:
-		"""
-
-		if not isinstance(user, User):
-			raise ValueError("Expected user object. Given " + str(type(dict)))
-
-		id = user.id
-		user_dict = user.to_dict()
-		user_db = self.mongo.alfred.user
-
-		key = {"id": id}
-		user_db.update(key, user_dict, upsert=True)
+        key = {"id": id}
+        user_db.update(key, user_dict, upsert=True)
