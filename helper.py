@@ -14,7 +14,7 @@ class Helper():
     @staticmethod
     def create_replykeyboardmarkup(args, one_time_keyboard=False):
         """
-        Creates a markup.
+        Creates a markup from a given list of options as string.
         :param args:
         :return: ReplyKeyboardMarkup
         """
