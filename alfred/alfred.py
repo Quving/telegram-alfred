@@ -7,9 +7,9 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHand
 from telegram.utils.promise import Promise
 
 from alfred import menu_conv_handler
-from alfred.conversation_memory import AlfredConversationMemory
+from alfred.conversation_memory import ConversationMemory
 from alfred.exceptions import BotTokenNotSetException, AlfredConversationStorageException
-from alfred.user_commands import AlfredUserCommands
+from alfred.user_commands import UserCommands
 
 
 class Alfred:
@@ -27,7 +27,7 @@ class Alfred:
         self.updater = Updater(token)
         self.dp = self.updater.dispatcher
 
-        self.conversation_memory = AlfredConversationMemory()
+        self.conversation_memory = ConversationMemory()
 
         self.add_commands()
         self.add_menus()
@@ -40,14 +40,14 @@ class Alfred:
                                              first=0)
 
     def add_commands(self):
-        self.dp.add_handler(CommandHandler("help", AlfredUserCommands.help))
-        self.dp.add_handler(CommandHandler("pushoff", AlfredUserCommands.pushoff))
-        self.dp.add_handler(CommandHandler("start", AlfredUserCommands.start))
-        self.dp.add_handler(CommandHandler("pushon", AlfredUserCommands.pushon))
+        self.dp.add_handler(CommandHandler("help", UserCommands.help))
+        self.dp.add_handler(CommandHandler("pushoff", UserCommands.pushoff))
+        self.dp.add_handler(CommandHandler("start", UserCommands.start))
+        self.dp.add_handler(CommandHandler("pushon", UserCommands.pushon))
 
     def add_menus(self):
         # ConversationHandler for Menu
-        self.menu_conv = menu_conv_handler.ConvHandlerMenu(self)
+        self.menu_conv = menu_conv_handler.MenuConvHandler(self)
         self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("menu", self.menu_conv.menu_start)],
                                                      states=self.menu_conv.states,
                                                      fallbacks=[RegexHandler('^' + self.menu_conv.menu_option2 + '$',

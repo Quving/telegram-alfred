@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 from alfred.exceptions import UserNotFoundException
-from alfred.memory import AlfredMemory
+from alfred.memory import Memory
 from user import User
 
 
-class AlfredUserMemory(AlfredMemory):
+class UserMemory(Memory):
     def __init__(self):
-        self.mongo_client = super(AlfredUserMemory, self).get_mongo_client()
+        self.mongo_client = super(UserMemory, self).get_mongo_client()
 
     def get_user_by_id(self, user_id):
         """

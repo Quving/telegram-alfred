@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-from alfred.memory import AlfredMemory
+from alfred.memory import Memory
 from bson.objectid import ObjectId
 from collections import defaultdict
 
 
-class AlfredConversationMemory(AlfredMemory):
+class ConversationMemory(Memory):
     """
     This class manages the conversation states and communicate with the mongo databases.
     """
 
     def __init__(self):
-        self.mongo_client = super(AlfredConversationMemory, self).get_mongo_client()
+        self.mongo_client = super(ConversationMemory, self).get_mongo_client()
         self.conversation_db = self.mongo_client.alfred.conversations
 
     def decode_user_data_dict(self, user_data_dict):
@@ -123,7 +123,7 @@ class AlfredConversationMemory(AlfredMemory):
 
 
 if __name__ == "__main__":
-    mem = AlfredConversationMemory()
+    mem = ConversationMemory()
     dicti = {'_id': ObjectId('5b7ee2cbe86f8e6b4ed3ef05'), '120745084': {'key': [120745084, 120745084], 'value': 4},
              'id': 'conversation'}
     print(mem.encode_conversation_dict(dicti))

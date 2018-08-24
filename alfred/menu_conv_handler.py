@@ -6,19 +6,19 @@ import random
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
 
-from alfred.news_memory import AlfredNewsMemory
-from alfred.user_commands import AlfredUserCommands
-from alfred.user_memory import AlfredUserMemory
+from alfred.news_memory import NewsMemory
+from alfred.user_commands import UserCommands
+from alfred.user_memory import UserMemory
 from alfred.util.helper import Helper
 from news import NdrClient
 from user import User
 
 
-class ConvHandlerMenu:
+class MenuConvHandler:
     def __init__(self, alfred):
         # Memories
-        self.alfred_user_memory = AlfredUserMemory()
-        self.alfred_news_memory = AlfredNewsMemory()
+        self.alfred_user_memory = UserMemory()
+        self.alfred_news_memory = NewsMemory()
 
         self.ndrclient = NdrClient()
         self.alfred = alfred
@@ -109,7 +109,7 @@ class ConvHandlerMenu:
                                          "rubrik": ""}}
 
             user_obj = User(user_dict=user_dict)
-            AlfredUserCommands.alfred_user_memory.upsert_user(user=user_obj)
+            UserCommands.alfred_user_memory.upsert_user(user=user_obj)
             reply_text = "Willkommen {}! Bitte ".format(user["first_name"])
         else:
             reply_text = "Sie sind im Hauptmenu. Was möchten Sie tun?"

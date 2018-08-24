@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from alfred.memory import AlfredMemory
-from alfred.user_memory import AlfredUserMemory
+from alfred.memory import Memory
+from alfred.user_memory import UserMemory
 
 
-class AlfredNewsMemory(AlfredMemory):
+class NewsMemory(Memory):
     def __init__(self):
-        self.alfred_user_memory = AlfredUserMemory()
-        self.mongo_client = super(AlfredNewsMemory, self).get_mongo_client()
+        self.alfred_user_memory = UserMemory()
+        self.mongo_client = super(NewsMemory, self).get_mongo_client()

@@ -4,7 +4,7 @@ import os
 from pymongo import MongoClient
 
 
-class AlfredMemory:
+class Memory:
     def __init__(self):
         self.mongo_client = self.get_mongo_client()
 
