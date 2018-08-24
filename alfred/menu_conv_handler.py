@@ -5,6 +5,7 @@ import random
 
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
+
 from alfred.material.news import NdrClient
 from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory
@@ -98,6 +99,9 @@ class MenuConvHandler:
         :return:
         """
         user = update.message.from_user
+
+        # Welcome-text
+        UserCommands.start(bot, update)
 
         if not self.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
             user_dict = {"id": str(user["id"]),

@@ -36,15 +36,22 @@ class Alfred:
                                              first=0)
 
     def add_commands(self):
+        """
+        Add commandhandlers to dispatcher.
+        :return:
+        """
         self.dp.add_handler(CommandHandler("help", UserCommands.help))
         self.dp.add_handler(CommandHandler("pushoff", UserCommands.pushoff))
-        self.dp.add_handler(CommandHandler("start", UserCommands.start))
+        # self.dp.add_handler(CommandHandler("start", UserCommands.start))
         self.dp.add_handler(CommandHandler("pushon", UserCommands.pushon))
 
     def add_menus(self):
-        # ConversationHandler for Menu
+        """
+        Add conversationhandler for menu to dispatchner.
+        :return:
+        """
         self.menu_conv = menu_conv_handler.MenuConvHandler(self)
-        self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("menu", self.menu_conv.menu_start)],
+        self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("start", self.menu_conv.menu_start)],
                                                      states=self.menu_conv.states,
                                                      fallbacks=[RegexHandler('^' + self.menu_conv.menu_option2 + '$',
                                                                              self.menu_conv.menu_done,
