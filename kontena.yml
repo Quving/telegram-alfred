@@ -11,6 +11,7 @@ services:
     instances: 1
     environment:
       - ALFRED_MONGO_DB_HOST=db
+      - ALFRED_MODE=production
     secrets:
       - secret: ALFRED_BOT_TOKEN
         name: ALFRED_BOT_TOKEN
