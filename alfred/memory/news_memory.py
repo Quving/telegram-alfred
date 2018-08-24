@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from alfred.memory.memory import Memory
 from alfred.memory.user_memory import UserMemory

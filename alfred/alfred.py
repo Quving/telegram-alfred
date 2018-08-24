@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import logging
 import os
@@ -7,8 +8,8 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHand
 from telegram.utils.promise import Promise
 
 from alfred import menu_conv_handler
-from alfred.memory.conversation_memory import ConversationMemory
 from alfred.exceptions import BotTokenNotSetException, AlfredConversationStorageException
+from alfred.memory.conversation_memory import ConversationMemory
 from alfred.user_commands import UserCommands
 
 

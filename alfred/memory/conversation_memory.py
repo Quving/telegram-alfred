@@ -1,8 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from collections import defaultdict
+
+from bson.objectid import ObjectId
 
 from alfred.memory.memory import Memory
-from bson.objectid import ObjectId
-from collections import defaultdict
 
 
 class ConversationMemory(Memory):

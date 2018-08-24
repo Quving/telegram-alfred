@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from alfred.alfred import Alfred
 import os
+
+from alfred.alfred import Alfred
 from alfred.exceptions import BotTokenNotSetException, DatabaseNotSetException
 
 
