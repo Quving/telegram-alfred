@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from alfred.memory import Memory
+from alfred.memory.memory import Memory
 from bson.objectid import ObjectId
 from collections import defaultdict
 

@@ -2,8 +2,8 @@
 import json
 
 from alfred.exceptions import AlfredFileWrongFormatException
-from alfred.news_memory import NewsMemory
-from alfred.user_memory import UserMemory
+from alfred.memory.news_memory import NewsMemory
+from alfred.memory.user_memory import UserMemory
 from user import User
 
 

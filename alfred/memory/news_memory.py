@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from alfred.memory import Memory
-from alfred.user_memory import UserMemory
+from alfred.memory.memory import Memory
+from alfred.memory.user_memory import UserMemory
 
 
 class NewsMemory(Memory):

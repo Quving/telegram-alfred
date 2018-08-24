@@ -6,9 +6,9 @@ import random
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
 
-from alfred.news_memory import NewsMemory
+from alfred.memory.news_memory import NewsMemory
 from alfred.user_commands import UserCommands
-from alfred.user_memory import UserMemory
+from alfred.memory.user_memory import UserMemory
 from alfred.util.helper import Helper
 from news import NdrClient
 from user import User

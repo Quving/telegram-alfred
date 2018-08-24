@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from alfred.exceptions import UserNotFoundException
-from alfred.memory import Memory
+from alfred.memory.memory import Memory
 from user import User
 
 
