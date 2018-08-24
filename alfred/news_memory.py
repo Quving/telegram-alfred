@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 
-import os
-import random
-
-from pymongo import MongoClient
-from alfred_memory import AlfredMemory
-from alfred_user_memory import AlfredUserMemory
+from alfred.memory import AlfredMemory
+from alfred.user_memory import AlfredUserMemory
 
 
 class AlfredNewsMemory(AlfredMemory):

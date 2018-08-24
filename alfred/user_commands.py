@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import json
 
-from alfred_exceptions import AlfredFileWrongFormatException
-from alfred_news_memory import AlfredNewsMemory
-from alfred_user_memory import AlfredUserMemory
+from alfred.exceptions import AlfredFileWrongFormatException
+from alfred.news_memory import AlfredNewsMemory
+from alfred.user_memory import AlfredUserMemory
 from user import User
 
 

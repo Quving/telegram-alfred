@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from alfred import Alfred
+from alfred.alfred import Alfred
 import os
-from alfred_exceptions import BotTokenNotSetException, DatabaseNotSetException
+from alfred.exceptions import BotTokenNotSetException, DatabaseNotSetException
 
 
 def check_envs():
@@ -30,4 +30,3 @@ if __name__ == "__main__":
     # Launch 'Alfred'.
     alfred = Alfred()
     alfred.launch()
-

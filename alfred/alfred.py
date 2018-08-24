@@ -6,10 +6,10 @@ import os
 from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHandler
 from telegram.utils.promise import Promise
 
-import conv_handler_menu
-from alfred_conversation_memory import AlfredConversationMemory
-from alfred_exceptions import BotTokenNotSetException, AlfredConversationStorageException
-from alfred_user_commands import AlfredUserCommands
+from alfred import conv_handler_menu
+from alfred.conversation_memory import AlfredConversationMemory
+from alfred.exceptions import BotTokenNotSetException, AlfredConversationStorageException
+from alfred.user_commands import AlfredUserCommands
 
 
 class Alfred:
