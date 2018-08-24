@@ -29,6 +29,5 @@ if __name__ == "__main__":
 
     # Launch 'Alfred'.
     alfred = Alfred()
-    alfred.add_commands()
-    alfred.add_menus()
     alfred.launch()
+
