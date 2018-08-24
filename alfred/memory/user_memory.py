@@ -2,7 +2,7 @@
 
 from alfred.exceptions import UserNotFoundException
 from alfred.memory.memory import Memory
-from user import User
+from alfred.material.user import User
 
 
 class UserMemory(Memory):

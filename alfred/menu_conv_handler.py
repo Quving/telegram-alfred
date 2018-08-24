@@ -10,8 +10,8 @@ from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
 from alfred.user_commands import UserCommands
 from alfred.util.helper import Helper
-from news import NdrClient
-from user import User
+from alfred.material.news import NdrClient
+from alfred.material.user import User
 
 
 class MenuConvHandler:
