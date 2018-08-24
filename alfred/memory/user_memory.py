@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 from alfred.exceptions import UserNotFoundException
-from alfred.memory.memory import Memory
 from alfred.material.user import User
+from alfred.memory.memory import Memory
 
 
 class UserMemory(Memory):
     def __init__(self):
-        self.mongo_client = super(UserMemory, self).get_mongo_client()
+        super().__init__()
+        self.user_db = self.db.user
 
     def get_user_by_id(self, user_id):
         """
@@ -18,8 +19,7 @@ class UserMemory(Memory):
         """
         id = str(user_id)
 
-        user_db = self.mongo_client.alfred.user
-        user_dict = user_db.find_one({"id": id})
+        user_dict = self.user_db.find_one({"id": id})
         if user_dict is None:
             raise UserNotFoundException("User " + id + " does not exist.")
 
@@ -33,8 +33,7 @@ class UserMemory(Memory):
         :param user_id_str:
         :return:
         """
-        user_db = self.mongo_client.alfred.user
-        query = user_db.find_one({"id": user_id_str})
+        query = self.user_db.find_one({"id": user_id_str})
         return not query is None
 
     def upsert_user(self, user):
@@ -50,7 +49,6 @@ class UserMemory(Memory):
 
         id = user.id
         user_dict = user.to_dict()
-        user_db = self.mongo_client.alfred.user
 
         key = {"id": id}
-        user_db.update(key, user_dict, upsert=True)
+        self.user_db.update(key, user_dict, upsert=True)

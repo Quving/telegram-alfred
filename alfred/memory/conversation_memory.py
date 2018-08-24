@@ -14,8 +14,8 @@ class ConversationMemory(Memory):
     """
 
     def __init__(self):
-        self.mongo_client = super(ConversationMemory, self).get_mongo_client()
-        self.conversation_db = self.mongo_client.alfred.conversations
+        super().__init__()
+        self.conversation_db = self.db.conversation
 
     def decode_user_data_dict(self, user_data_dict):
         """
