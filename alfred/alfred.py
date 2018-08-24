@@ -42,7 +42,6 @@ class Alfred:
         """
         self.dp.add_handler(CommandHandler("help", UserCommands.help))
         self.dp.add_handler(CommandHandler("pushoff", UserCommands.pushoff))
-        # self.dp.add_handler(CommandHandler("start", UserCommands.start))
         self.dp.add_handler(CommandHandler("pushon", UserCommands.pushon))
 
     def add_menus(self):
