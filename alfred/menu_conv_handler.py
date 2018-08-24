@@ -9,7 +9,7 @@ from telegram.ext import RegexHandler, MessageHandler, Filters
 from alfred.news_memory import AlfredNewsMemory
 from alfred.user_commands import AlfredUserCommands
 from alfred.user_memory import AlfredUserMemory
-from helper import Helper
+from alfred.util.helper import Helper
 from news import NdrClient
 from user import User
 

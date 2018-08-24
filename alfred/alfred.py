@@ -6,7 +6,7 @@ import os
 from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHandler
 from telegram.utils.promise import Promise
 
-from alfred import conv_handler_menu
+from alfred import menu_conv_handler
 from alfred.conversation_memory import AlfredConversationMemory
 from alfred.exceptions import BotTokenNotSetException, AlfredConversationStorageException
 from alfred.user_commands import AlfredUserCommands
@@ -47,7 +47,7 @@ class Alfred:
 
     def add_menus(self):
         # ConversationHandler for Menu
-        self.menu_conv = conv_handler_menu.ConvHandlerMenu(self)
+        self.menu_conv = menu_conv_handler.ConvHandlerMenu(self)
         self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("menu", self.menu_conv.menu_start)],
                                                      states=self.menu_conv.states,
                                                      fallbacks=[RegexHandler('^' + self.menu_conv.menu_option2 + '$',
