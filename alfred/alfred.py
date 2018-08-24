@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
 
 from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHandler
 from telegram.utils.promise import Promise
 
 from alfred import menu_conv_handler
-from alfred.exceptions import BotTokenNotSetException, AlfredConversationStorageException
+from alfred.conts import Conts
+from alfred.exceptions import AlfredConversationStorageException
 from alfred.memory.conversation_memory import ConversationMemory
 from alfred.user_commands import UserCommands
 
@@ -20,12 +20,7 @@ class Alfred:
                             level=logging.INFO)
 
         self.logger = logging.getLogger(__name__)
-
-        token = os.getenv("ALFRED_BOT_TOKEN")
-        if token is None:
-            raise BotTokenNotSetException("Set the bot token.")
-
-        self.updater = Updater(token)
+        self.updater = Updater(Conts.ALFRED_BOT_TOKEN)
         self.dp = self.updater.dispatcher
 
         self.conversation_memory = ConversationMemory()

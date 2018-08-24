@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import json
 
+from alfred.conts import Conts
 from alfred.exceptions import AlfredFileWrongFormatException
+from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
-from alfred.material.user import User
 
 
 class UserCommands:
@@ -21,7 +22,7 @@ class UserCommands:
 
     @staticmethod
     def start(bot, update):
-        datenschutz = UserCommands.get_text("datenschutz.json")
+        datenschutz = UserCommands.get_text(Conts.DATENSCHUTZ_JSON)
         user = update.message.from_user
         if not UserCommands.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
             user_dict = {"id": str(user["id"]),
@@ -42,7 +43,7 @@ class UserCommands:
 
     @staticmethod
     def help(bot, update):
-        help = UserCommands.get_text("help.json")
+        help = UserCommands.get_text(Conts.HELPER_JSON)
         update.message.reply_markdown(help)
 
     @staticmethod

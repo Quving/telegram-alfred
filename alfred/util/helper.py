@@ -6,9 +6,11 @@ import json
 import emoji
 from telegram import ReplyKeyboardMarkup
 
+from alfred.conts import Conts
+
 
 class Helper():
-    with open("cities.json", "r") as f:
+    with open(Conts.CITIES_JSON, "r") as f:
         cities = json.load(f)
 
     @staticmethod

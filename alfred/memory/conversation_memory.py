@@ -79,7 +79,10 @@ class ConversationMemory(Memory):
         :return:
         """
         user_data_dict_decoded = self.conversation_db.find_one({"id": "user_data"})
-        return defaultdict(dict, self.encode_user_data_dict(user_data_dict_decoded=user_data_dict_decoded))
+        if user_data_dict_decoded is None:
+            return defaultdict(dict)
+        encoded = defaultdict(dict, self.encode_user_data_dict(user_data_dict_decoded=user_data_dict_decoded))
+        return encoded
 
     def get_conversations(self):
         """
@@ -87,6 +90,10 @@ class ConversationMemory(Memory):
         :return:
         """
         conversation_dict_decoded = self.conversation_db.find_one({"id": "conversation"})
+
+        if conversation_dict_decoded is None:
+            return {}
+
         encoded = self.encode_conversation_dict(conversation_dict_decoded=conversation_dict_decoded)
         return encoded
 

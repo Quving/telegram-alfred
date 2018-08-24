@@ -5,13 +5,12 @@ import random
 
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
-
+from alfred.material.news import NdrClient
+from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
 from alfred.user_commands import UserCommands
 from alfred.util.helper import Helper
-from alfred.material.news import NdrClient
-from alfred.material.user import User
 
 
 class MenuConvHandler:
