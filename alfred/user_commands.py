@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 
-from alfred.conts import Conts
+from alfred.vars import Conts
 from alfred.exceptions import AlfredFileWrongFormatException
 from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory

@@ -6,7 +6,7 @@ import json
 import emoji
 from telegram import ReplyKeyboardMarkup
 
-from alfred.conts import Conts
+from alfred.vars import Conts
 
 
 class Helper():

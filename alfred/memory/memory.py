@@ -5,7 +5,7 @@ import os
 
 from pymongo import MongoClient
 
-from alfred.conts import Conts
+from alfred.vars import Conts
 
 
 class Memory:

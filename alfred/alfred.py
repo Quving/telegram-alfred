@@ -7,7 +7,7 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHand
 from telegram.utils.promise import Promise
 
 from alfred import menu_conv_handler
-from alfred.conts import Conts
+from alfred.vars import Conts
 from alfred.exceptions import AlfredConversationStorageException
 from alfred.memory.conversation_memory import ConversationMemory
 from alfred.user_commands import UserCommands
