@@ -107,7 +107,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        MenuCommands.menu_start(self, bot, update)
+        MenuCommands.start(self, bot, update)
 
         return self.MENU_CHOOSING
 

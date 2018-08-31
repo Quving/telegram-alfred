@@ -10,7 +10,7 @@ from alfred.user_commands import UserCommands
 
 class MenuCommands:
     @staticmethod
-    def menu_start(self, bot, update):
+    def start(self, bot, update):
         user = update.message.from_user
 
         # Welcome-text
