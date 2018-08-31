@@ -6,7 +6,7 @@ import logging
 from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHandler
 from telegram.utils.promise import Promise
 
-from alfred import menu_conv_handler
+from alfred.conversation import conversation_handler
 from alfred.exceptions import AlfredConversationStorageException
 from alfred.memory.conversation_memory import ConversationMemory
 from alfred.user_commands import UserCommands
@@ -49,7 +49,7 @@ class Alfred:
         Add conversationhandler for menu to dispatchner.
         :return:
         """
-        self.menu_conv = menu_conv_handler.MenuConvHandler(self)
+        self.menu_conv = conversation_handler.MenuConvHandler(self)
         self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("start", self.menu_conv.menu_start)],
                                                      states=self.menu_conv.states,
                                                      fallbacks=[

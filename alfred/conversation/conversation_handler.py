@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random
-
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
 
+from alfred.conversation.menu_commands import MenuCommands
+from alfred.conversation.filter_commands import FilterCommands
+from alfred.conversation.option_commands import OptionCommands
 from alfred.material.news import NdrClient
-from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
 from alfred.user_commands import UserCommands
@@ -109,27 +109,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        user = update.message.from_user
-
-        # Welcome-text
-        UserCommands.start(bot, update)
-
-        if not self.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
-            user_dict = {"id": str(user["id"]),
-                         "first_name": user["first_name"],
-                         "username": user["username"],
-                         "preferences": {"region": "",
-                                         "lokales": "",
-                                         "rubrik": ""}}
-
-            user_obj = User(user_dict=user_dict)
-            UserCommands.alfred_user_memory.upsert_user(user=user_obj)
-            reply_text = "Willkommen {}! Bitte ".format(user["first_name"])
-        else:
-            reply_text = "Sie sind im Hauptmenu. Was möchten Sie tun?"
-
-        update.message.reply_text(reply_text,
-                                  reply_markup=self.menu_markup)
+        MenuCommands.start(self, bot, update)
 
         return self.MENU_CHOOSING
 
@@ -142,34 +122,20 @@ class MenuConvHandler:
         :return:
         """
         text = update.message.text
-        user = update.message.from_user
-        reply_text = ""
 
         # Neuigkeiten anzeigen
         if text == self.menu_option1:
-            user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
-            if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
-                reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
-            else:
-                news_list = self.ndrclient.fetch_region_news(user_obj.preferences["region"])
-                if news_list:
-                    news = news_list[random.randint(0, len(news_list) - 1)]
-                    reply_text = news.to_string()
-                else:
-                    reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
-            update.message.reply_markdown(reply_text,
-                                          reply_markup=self.menu_markup)
+            MenuCommands.neuigkeiten(self, bot, update)
+
         # Hilfe anzeigen
         elif text == self.menu_option3:
             UserCommands.help(bot, update)
         else:
-            reply_text = "Unbekannter Befehl."
-            update.message.reply_markdown(reply_text, reply_markup=self.menu_markup)
-
-        return self.MENU_CHOOSING
+            MenuCommands.unknown(self, bot, update)
+            return self.MENU_CHOOSING
 
     def menu_received_information(self, bot, update, user_data):
-        update.message.reply_text("Unbekannte Aktion.")
+        MenuCommands.unknown(self, bot, update)
 
         return self.MENU_CHOOSING
 
@@ -190,10 +156,10 @@ class MenuConvHandler:
         # Zu anderen Optionen
         elif text == self.menu_option4:
             return self.option_start(bot, update)
+
+        # Unbekannt
         else:
-            reply_text = "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
-            update.message.reply_markdown(reply_text,
-                                          reply_markup=self.option_markup)
+            MenuCommands.unknown(self, bot, update)
             return self.MENU_CHOOSING
 
     def filter_start(self, bot, update):
@@ -203,9 +169,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        reply_text = "Bitte konfigurieren Sie jetzt Ihre News-Präferenzen."
-        update.message.reply_text(reply_text,
-                                  reply_markup=self.filter_markup)
+        FilterCommands.start(self, bot, update)
 
         return self.FILTER_CHOOSING
 
@@ -222,53 +186,26 @@ class MenuConvHandler:
 
         # Region
         if text == self.filter_option1:
-            markup = Helper.create_replykeyboardmarkup(
-                ["Hamburg", "Niedersachsen", "Mecklenburg-Vorpommern", "Schleswig-Holstein"])
-
-            choice = self.get_key_from_option(text).title()
-            update.message.reply_markdown('Bitte geben Sie ihre Wahl für *{}* an.'.format(choice),
-                                          reply_markup=markup)
+            FilterCommands.region_setzen(self, bot, update)
             return self.FILTER_TYPING_REPLY
 
         # Rubrik
         elif text == self.filter_option2:
-            markup = Helper.create_replykeyboardmarkup(["Sport", "Kultur", "Nachrichten", "Ratgeber"])
-
-            choice = self.get_key_from_option(text).title()
-            update.message.reply_markdown('Bitte geben Sie ihre Wahl für *{}* an.'.format(choice),
-                                          reply_markup=markup)
+            FilterCommands.rubrik_setzen(self, bot, update)
             return self.FILTER_TYPING_REPLY
 
         # Lokales
         elif text == self.filter_option3:
-            key = self.get_key_from_option(self.filter_option1)
-            if key in user_data:
-                cities = Helper.cities_from_region(user_data[key])
-                markup = Helper.create_replykeyboardmarkup(cities)
-                choice = self.get_key_from_option(text).title()
-                update.message.reply_markdown('Bitte geben Sie ihre Wahl für *{}* an.'.format(choice),
-                                              reply_markup=markup)
-                return self.FILTER_TYPING_REPLY
-            else:
-                update.message.reply_markdown(
-                    "Bevor Lokales eingestellt werden kann, muss die **Region** zuerst gesetzt sein.",
-                    reply_markup=self.filter_markup)
-                return self.FILTER_CHOOSING
+            FilterCommands.lokales_setzen(self, bot, update, user_data)
+            return self.FILTER_TYPING_REPLY
 
         # Filter anzeigen
         elif text == self.filter_option4:
-            user = update.message.from_user
-            user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
-            facts = self.facts_to_str(user_obj.preferences)
-            reply_text = "*Dein Profil:*\n\n" + facts
-            update.message.reply_markdown(reply_text, reply_markup=self.filter_markup)
+            FilterCommands.filter_anzeigen(self, bot, update)
             return self.FILTER_CHOOSING
 
         else:
-            update.message.reply_markdown(
-                "Unbekannter Befehl. Wir bitten um Entschuldigung. Das Entwicklerteam wird sich darum kümmern.",
-                reply_markup=self.filter_markup)
-
+            FilterCommands.unknown(self, bot, update)
             return self.FILTER_CHOOSING
 
     def filter_received_information(self, bot, update, user_data):
@@ -360,10 +297,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        reply_text = "Sie sind bei den Optionen. Was möchten Sie tun?"
-        update.message.reply_text(reply_text,
-                                  reply_markup=self.option_markup)
-
+        OptionCommands.start(self, bot, update)
         return self.OPTION_CHOOSING
 
     def option_regular_choice(self, bot, update, user_data):
@@ -379,7 +313,7 @@ class MenuConvHandler:
 
         # Feedback
         if text == self.option_option1:
-            update.message.reply_markdown("Bitte schreiben Sie nun Ihr Feedback.")
+            OptionCommands.feedback(self, bot, update)
             return self.OPTION_TYPING_REPLY
 
         # Datenschutz
@@ -389,13 +323,10 @@ class MenuConvHandler:
 
         # Informationen zu Alfred?
         elif text == self.option_option3:
-            update.message.reply_markdown("Nun werden einige Informationen zu Alfred angezeigt.",
-                                          reply_markup=self.option_markup)
+            OptionCommands.information(self, bot, update)
             return self.OPTION_CHOOSING
         else:
-            update.message.reply_markdown(
-                "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
-                reply_markup=self.option_markup)
+            OptionCommands.unknown(self, bot, update)
             return self.OPTION_CHOOSING
 
     def option_received_information(self, bot, update, user_data):
@@ -426,9 +357,6 @@ class MenuConvHandler:
         """
         if 'choice' in user_data:
             del user_data['choice']
-
-        # reply_text = ""
-        # update.message.reply_markdown(reply_text)
 
         return self.menu_start(bot, update)
 
