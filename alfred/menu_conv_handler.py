@@ -159,7 +159,7 @@ class MenuConvHandler:
                     reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
             update.message.reply_markdown(reply_text,
                                           reply_markup=self.menu_markup)
-         # Hilfe anzeigen
+        # Hilfe anzeigen
         elif text == self.menu_option3:
             UserCommands.help(bot, update)
         else:
@@ -189,8 +189,6 @@ class MenuConvHandler:
 
         # Zu anderen Optionen
         elif text == self.menu_option4:
-            reply_text = "Zu optionen.",
-            update.message.reply_markdown(reply_text)
             return self.option_start(bot, update)
         else:
             reply_text = "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
