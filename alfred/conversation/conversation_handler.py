@@ -6,6 +6,7 @@ from telegram.ext import RegexHandler, MessageHandler, Filters
 
 from alfred.conversation.menu_commands import MenuCommands
 from alfred.conversation.filter_commands import FilterCommands
+from alfred.conversation.option_commands import OptionCommands
 from alfred.material.news import NdrClient
 from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
@@ -296,10 +297,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        reply_text = "Sie sind bei den Optionen. Was möchten Sie tun?"
-        update.message.reply_text(reply_text,
-                                  reply_markup=self.option_markup)
-
+        OptionCommands.start(self, bot, update)
         return self.OPTION_CHOOSING
 
     def option_regular_choice(self, bot, update, user_data):
@@ -315,7 +313,7 @@ class MenuConvHandler:
 
         # Feedback
         if text == self.option_option1:
-            update.message.reply_markdown("Bitte schreiben Sie nun Ihr Feedback.")
+            OptionCommands.feedback(self, bot, update)
             return self.OPTION_TYPING_REPLY
 
         # Datenschutz
@@ -325,13 +323,10 @@ class MenuConvHandler:
 
         # Informationen zu Alfred?
         elif text == self.option_option3:
-            update.message.reply_markdown("Nun werden einige Informationen zu Alfred angezeigt.",
-                                          reply_markup=self.option_markup)
+            OptionCommands.information(self, bot, update)
             return self.OPTION_CHOOSING
         else:
-            update.message.reply_markdown(
-                "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
-                reply_markup=self.option_markup)
+            OptionCommands.unknown(self, bot, update)
             return self.OPTION_CHOOSING
 
     def option_received_information(self, bot, update, user_data):
@@ -362,9 +357,6 @@ class MenuConvHandler:
         """
         if 'choice' in user_data:
             del user_data['choice']
-
-        # reply_text = ""
-        # update.message.reply_markdown(reply_text)
 
         return self.menu_start(bot, update)
 
