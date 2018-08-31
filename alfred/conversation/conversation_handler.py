@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import random
-
 from telegram import ReplyKeyboardMarkup
 from telegram.ext import RegexHandler, MessageHandler, Filters
 
+from alfred.conversation.menu_commands import MenuCommands
 from alfred.material.news import NdrClient
-from alfred.material.user import User
 from alfred.memory.news_memory import NewsMemory
 from alfred.memory.user_memory import UserMemory
 from alfred.user_commands import UserCommands
@@ -109,27 +107,7 @@ class MenuConvHandler:
         :param update:
         :return:
         """
-        user = update.message.from_user
-
-        # Welcome-text
-        UserCommands.start(bot, update)
-
-        if not self.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
-            user_dict = {"id": str(user["id"]),
-                         "first_name": user["first_name"],
-                         "username": user["username"],
-                         "preferences": {"region": "",
-                                         "lokales": "",
-                                         "rubrik": ""}}
-
-            user_obj = User(user_dict=user_dict)
-            UserCommands.alfred_user_memory.upsert_user(user=user_obj)
-            reply_text = "Willkommen {}! Bitte ".format(user["first_name"])
-        else:
-            reply_text = "Sie sind im Hauptmenu. Was möchten Sie tun?"
-
-        update.message.reply_text(reply_text,
-                                  reply_markup=self.menu_markup)
+        MenuCommands.menu_start(self, bot, update)
 
         return self.MENU_CHOOSING
 
@@ -147,26 +125,14 @@ class MenuConvHandler:
 
         # Neuigkeiten anzeigen
         if text == self.menu_option1:
-            user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
-            if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
-                reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
-            else:
-                news_list = self.ndrclient.fetch_region_news(user_obj.preferences["region"])
-                if news_list:
-                    news = news_list[random.randint(0, len(news_list) - 1)]
-                    reply_text = news.to_string()
-                else:
-                    reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
-            update.message.reply_markdown(reply_text,
-                                          reply_markup=self.menu_markup)
+            MenuCommands.neuigkeiten(self, bot, update)
+
         # Hilfe anzeigen
         elif text == self.menu_option3:
             UserCommands.help(bot, update)
         else:
-            reply_text = "Unbekannter Befehl."
-            update.message.reply_markdown(reply_text, reply_markup=self.menu_markup)
-
-        return self.MENU_CHOOSING
+            MenuCommands.unknown(self, bot, update)
+            return self.MENU_CHOOSING
 
     def menu_received_information(self, bot, update, user_data):
         update.message.reply_text("Unbekannte Aktion.")
@@ -190,10 +156,10 @@ class MenuConvHandler:
         # Zu anderen Optionen
         elif text == self.menu_option4:
             return self.option_start(bot, update)
+
+        # Unbekannt
         else:
-            reply_text = "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
-            update.message.reply_markdown(reply_text,
-                                          reply_markup=self.option_markup)
+            MenuCommands.unknown(self, bot, update)
             return self.MENU_CHOOSING
 
     def filter_start(self, bot, update):
