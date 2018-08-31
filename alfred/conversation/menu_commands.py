@@ -11,11 +11,14 @@ from alfred.user_commands import UserCommands
 class MenuCommands:
     @staticmethod
     def start(self, bot, update):
+        """
+        That is the first method that is called for the sub conversation handler 'filter'.
+        :param self:
+        :param bot:
+        :param update:
+        :return:
+        """
         user = update.message.from_user
-
-        # Welcome-text
-        UserCommands.start(bot, update)
-
         if not self.alfred_user_memory.user_exist_by_id(user_id_str=str(user["id"])):
             user_dict = {"id": str(user["id"]),
                          "first_name": user["first_name"],
@@ -35,6 +38,13 @@ class MenuCommands:
 
     @staticmethod
     def neuigkeiten(self, bot, update):
+        """
+        Send news in respect to the filter that has been set by the user.
+        :param self:
+        :param bot:
+        :param update:
+        :return:
+        """
         user = update.message.from_user
         user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
         if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
@@ -51,6 +61,13 @@ class MenuCommands:
 
     @staticmethod
     def unknown(self, bot, update):
+        """
+        Handle unknown commands in this conversation.
+        :param self:
+        :param bot:
+        :param update:
+        :return:
+        """
         reply_text = "Unbekannter Befehl. Bitte kontaktieren Sie das Entwicklerteam. Entschuldigung!",
         update.message.reply_markdown(reply_text,
                                       reply_markup=self.option_markup)
