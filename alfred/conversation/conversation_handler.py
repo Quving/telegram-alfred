@@ -120,8 +120,6 @@ class MenuConvHandler:
         :return:
         """
         text = update.message.text
-        user = update.message.from_user
-        reply_text = ""
 
         # Neuigkeiten anzeigen
         if text == self.menu_option1:
@@ -135,7 +133,7 @@ class MenuConvHandler:
             return self.MENU_CHOOSING
 
     def menu_received_information(self, bot, update, user_data):
-        update.message.reply_text("Unbekannte Aktion.")
+        MenuCommands.unknown(self, bot, update)
 
         return self.MENU_CHOOSING
 
