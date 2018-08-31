@@ -12,7 +12,7 @@ def get_mongo_db():
     """
     key = "ALFRED_MODE"
     if os.getenv(key) == "production":
-        return "alfred"
+        return "alfred_prod"
     elif os.getenv(key) == "development":
         return "alfred_dev"
     else:
