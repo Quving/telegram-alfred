@@ -7,10 +7,10 @@ from telegram.ext import Updater, CommandHandler, ConversationHandler, RegexHand
 from telegram.utils.promise import Promise
 
 from alfred import menu_conv_handler
-from alfred.vars import Conts
 from alfred.exceptions import AlfredConversationStorageException
 from alfred.memory.conversation_memory import ConversationMemory
 from alfred.user_commands import UserCommands
+from alfred.vars import Conts
 
 
 class Alfred:
@@ -52,12 +52,17 @@ class Alfred:
         self.menu_conv = menu_conv_handler.MenuConvHandler(self)
         self.menu_conv_handler = ConversationHandler(entry_points=[CommandHandler("start", self.menu_conv.menu_start)],
                                                      states=self.menu_conv.states,
-                                                     fallbacks=[RegexHandler('^' + self.menu_conv.menu_option2 + '$',
-                                                                             self.menu_conv.menu_done,
-                                                                             pass_user_data=True),
-                                                                RegexHandler('^' + self.menu_conv.filter_option5 + '$',
-                                                                             self.menu_conv.filter_done,
-                                                                             pass_user_data=True)])
+                                                     fallbacks=[
+                                                         RegexHandler('^({}|{})$'.format(self.menu_conv.menu_option2,
+                                                                                         self.menu_conv.menu_option4),
+                                                                      self.menu_conv.menu_done,
+                                                                      pass_user_data=True),
+                                                         RegexHandler('^' + self.menu_conv.option_option4 + '$',
+                                                                      self.menu_conv.option_done,
+                                                                      pass_user_data=True),
+                                                         RegexHandler('^' + self.menu_conv.filter_option5 + '$',
+                                                                      self.menu_conv.filter_done,
+                                                                      pass_user_data=True)])
 
         self.dp.add_handler(self.menu_conv_handler)
 
