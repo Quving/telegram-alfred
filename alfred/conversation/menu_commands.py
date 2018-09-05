@@ -4,6 +4,8 @@
 
 import random
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
 from alfred.material.user import User
 from alfred.user_commands import UserCommands
 
@@ -54,10 +56,20 @@ class MenuCommands:
             if news_list:
                 news = news_list[random.randint(0, len(news_list) - 1)]
                 reply_text = news.to_string()
+
+                keyboard = [[InlineKeyboardButton("Mehr zu diesem Thema",
+                                                  callback_data='2'),
+                             InlineKeyboardButton("Zum Volltext",
+                                                  url=news.link,
+                                                  callback_data='1')]]
+
+                reply_markup = InlineKeyboardMarkup(keyboard)
             else:
                 reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
+
         update.message.reply_markdown(reply_text,
-                                      reply_markup=self.menu_markup)
+                                      reply_markup=reply_markup)
+        # reply_markup=self.menu_markup)
 
     @staticmethod
     def unknown(self, bot, update):

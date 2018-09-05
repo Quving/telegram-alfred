@@ -40,11 +40,11 @@ class News:
         return not self == other
 
     def to_string(self):
-        str = "*{}*\n_{}_\n\n{}\n\n{}\n\n{}".format(self.title,
+        str = "*{}*\n_{}_\n\n{}\n\n{}".format(self.title,
                                                     self.created_at,
                                                     self.teaser,
-                                                    self.highlights,
-                                                    self.link.replace("_", "\_"))
+                                                    self.highlights)
+        # self.link.replace("_", "\_"))
         return str
 
     def to_json(self):
