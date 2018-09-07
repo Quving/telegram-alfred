@@ -4,6 +4,7 @@
 
 import random
 
+from telegram import ChatAction
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from alfred.material.user import User
@@ -52,6 +53,8 @@ class MenuCommands:
         if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
             reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
         else:
+            bot.send_chat_action(chat_id=update.message.chat_id,
+                                 action=ChatAction.TYPING)
             news_list = self.ndrclient.fetch_region_news(user_obj.preferences["region"])
             if news_list:
                 news = news_list[random.randint(0, len(news_list) - 1)]
@@ -66,6 +69,7 @@ class MenuCommands:
                 reply_markup = InlineKeyboardMarkup(keyboard)
                 update.message.reply_markdown(reply_text,
                                               reply_markup=reply_markup)
+
             else:
                 reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
 
