@@ -73,8 +73,8 @@ class MenuCommands:
             else:
                 reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
 
-        update.message.reply_markdown(reply_text,
-                                      reply_markup=self.menu_markup)
+                update.message.reply_markdown(reply_text,
+                                              reply_markup=self.menu_markup)
 
     @staticmethod
     def unknown(self, bot, update):
