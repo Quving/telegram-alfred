@@ -64,12 +64,13 @@ class MenuCommands:
                                                   callback_data='1')]]
 
                 reply_markup = InlineKeyboardMarkup(keyboard)
+                update.message.reply_markdown(reply_text,
+                                              reply_markup=reply_markup)
             else:
                 reply_text = "Es gibt derzeit keine Neuigkeiten mit dem gegenwärtigen Suchfilter."
 
         update.message.reply_markdown(reply_text,
-                                      reply_markup=reply_markup)
-        # reply_markup=self.menu_markup)
+                                      reply_markup=self.menu_markup)
 
     @staticmethod
     def unknown(self, bot, update):
