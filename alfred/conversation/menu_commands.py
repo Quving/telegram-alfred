@@ -52,6 +52,8 @@ class MenuCommands:
         user_obj = self.alfred_user_memory.get_user_by_id(str(user["id"]))
         if not "region" in user_obj.preferences or not user_obj.preferences["region"]:
             reply_text = "Es ist noch keine Region gesetzt. Bitte setzen Sie Ihren Filter in den Filter-Einstellungen."
+            update.message.reply_markdown(reply_text,
+                                          reply_markup=self.menu_markup)
         else:
             bot.send_chat_action(chat_id=update.message.chat_id,
                                  action=ChatAction.TYPING)
