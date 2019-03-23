@@ -1,7 +1,6 @@
 pipeline:
   publish:
     image: plugins/docker
-    privileged: true
     repo: pingu/telegram-alfred
     tags: latest
     secrets: [ docker_username, docker_password ]
@@ -13,6 +12,7 @@ pipeline:
     image: pingu/drone-plugin-kontena:latest
     secrets: [ kontena_token, kontena_url, kontena_grid ]
     kontena_stack: alfred
+    kontena_file: kontena.yml
     when:
       status: [ success ]
       branch: [ master ]
