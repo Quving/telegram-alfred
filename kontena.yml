@@ -6,8 +6,7 @@ services:
   bot:
     image: pingu/telegram-alfred:latest
     links:
-      - system/lb
-      - db
+      - lb/lb
     instances: 1
     environment:
       - ALFRED_MONGO_DB_HOST=db
@@ -20,14 +19,12 @@ services:
     image: mongo:latest
     instances: 1
     affinity:
-      - node==orange
+      - node==grapefruit
     stateful: yes
     volumes:
-      - /srv/alfred-db:/data/db
+      - /srv/alfred/mongo:/data/db
     links:
-      - system/lb
-    ports:
-      - 27000:27017
+      - lb/lb
     environment:
       - TZ=Europe/Berlin
 
